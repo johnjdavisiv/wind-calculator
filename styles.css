@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Mono&family=Roboto:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+
+:root {
+    --primary-color: #007bff;
+    --dark-accent: #0056b3;
+    --hover-color: #bde2ff;
+    --active-color:#2196F3;
+    --link-hover-color:#84caff;
+    --soft-white: #f7f7f7;
+    --soft-black: #333;
+    --app-max-width: 800px;
+    --toggle-color: #e9ecef;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    font-family: 'Roboto', sans-serif;
+    min-width: 320px;
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--soft-white);
+}
+
+
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+h1 {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+h2, h3, h4, h5, h6 {
+    color:var(--soft-black);
+    padding: 0.75em 0 0.25em 0;
+}
+
+
+p {
+    padding: 0.5em 0;
+}
+
+
+
+header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: #f3f3f3;
+    height: 4em;
+}
+
+header img.logo {
+    height: 50px; /* Adjust logo size */
+}
+
+header .home-link {
+    white-space: nowrap;
+    text-decoration: none;
+    font-size: 1.5em;
+    color: black;
+    margin: 0 10px; /* Gives some space around the site name */
+}
+
+.header-content{
+    max-width: var(--app-max-width); /* Sets the maximum width of the header content */
+    width: 100%; /* Ensures the content fills the container until it reaches max-width */
+    display: flex; /* Enables flexbox layout */
+    justify-content: space-between; /* Distributes space between items */
+    align-items: center; /* Aligns items vertically */
+    padding: 5px; /* Adds some spacing inside the header content */
+}
+
+/* Header/footer formatting */
+.header-content a, footer a{
+    color: var(--soft-white);
+}
+
+nav a {
+    text-decoration: none;
+    white-space: nowrap;
+    margin: 0 10px;
+}
+
+header, footer {
+    background-color: var(--soft-black); /* a dark background for contrast */
+    color: var(--soft-white); /* white text for visibility against the dark background */
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Main content */
+main {
+    max-width: var(--app-max-width);
+    background-color: white;
+    margin: 0 auto;
+    padding: 0.5em 1em;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* subtle shadow for depth */
+}
+
+
+/* So as-is the padding is set by the <main> left/right padding */
+/* And I think that's what we wnat */
+.app-box  {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+/* Excplainer box */
+.explainer-text {
+    line-height: 1.5;
+    padding: 0 0.5em;
+    font-size: 1.25em;
+}
+
+
+
+/* Must be at end */
+.hidden {
+    display: none;
+}
+
