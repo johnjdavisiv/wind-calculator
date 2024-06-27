@@ -7,7 +7,7 @@ console.log("script loaded")
 
 
 // define positive as a headwind, since it will be most common use case
-let wind_speed_m_s = 2.0 
+let wind_speed_m_s = 2.0  
 let runner_speed_m_s = 5.0 //5:20 per mile
 let runner_weight_kg = 70 // default body weight - TODO: CHANGE TO JDX MEAN!
 
@@ -77,8 +77,8 @@ function calcDragForce(relative_v, runner_Ap){
 
 function calcDeltaMetPower(drag_force, bw_kg){
     //Calculate change in metabolic power of a given drag force
-    
-    let delta_met_power_pct = 6.13*(drag_force/bw_kg)/100
+    ERROR WRONG!!! doe snot accoutn for gravity in bw
+    let delta_met_power_pct = 6.13*(drag_force/(bw_kg*GRAVITY))
     // This is a percentage as a decimal, e.g. a 1 N force for 100 N 
     // Specifically, percentage chagne in metabolci power in W/kg (I think? - check Da Silva 2022)
 
