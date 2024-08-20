@@ -27,7 +27,196 @@
     <main>
         <h1>Headwind and tailwind calculator</h1>
         <div class="app-box">
-            App goes here lol
+            <div class="pace-box">
+                <div class="left-dummy"></div>
+                <div class="clock" id="pace-dials">
+                    <div class="digitbox">
+                        <button class="material-icons svg-arrow" id="d1-up">expand_less</button>
+                        <div class="digit" id="d1">7</div>
+                        <button class="material-icons svg-arrow" id="d1-down">expand_more</button>
+                    </div>
+                    <div class="digitbox colon">
+                        <span class="digit">:</span>
+                    </div>
+                    <div class="digitbox">
+                        <button class="material-icons svg-arrow" id="d2-up">expand_less</button>
+                        <div class="digit" id="d2">0</div>
+                        <button class="material-icons svg-arrow" id="d2-down">expand_more</button>
+                    </div>
+                    <div class="digitbox">
+                        <button class="material-icons svg-arrow" id="d3-up">expand_less</button>
+                        <div class="digit" id="d3">0</div>
+                        <button class="material-icons svg-arrow" id="d3-down">expand_more</button>
+                    </div>
+                    <div class="unit-text" id="pace-units">/mi</div>
+                </div>
+                <div class="unit-stack">
+                    <button class="unit-toggle pace-toggle active" id="mi-pace">/mi</button>
+                    <button class="unit-toggle pace-toggle" id="km-pace">/km</button>
+                    <button class="unit-toggle pace-toggle" id="mph-speed">mph</button>
+                    <button class="unit-toggle pace-toggle" id="kmh-speed">km/h</button>
+                    <button class="unit-toggle pace-toggle" id="kmh-speed">m/s</button>
+                </div>
+            </div>
+            <div class="spacer toggle-box" id="pace-post">
+                <a href="#pace-vs-effort" class="i-note">?</a>
+                <div>
+                    <span id="pace-or-effort-pre"></span><span id="pace-or-effort">effort level&nbsp;</span><span>with a</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="arrow-container" id="wind-input">
+                <div class="arrow-box">
+                    <button class="material-icons pct-button" id="wind-m5" title="-5">keyboard_double_arrow_left</button>
+                    <button class="material-icons pct-button" id="wind-m1" title="-1">keyboard_arrow_left</button>
+                </div>
+                <div class="wind-text">
+                    <span class="incline-digits digit" id="wind-digit">
+                        5
+                    </span>
+                    <span class="wind-label ">
+                        &nbsp;mph
+                    </span>
+                </div>
+                <div class="arrow-box">
+                    <button class="material-icons pct-button" id="wind-p1" title="+1">keyboard_arrow_right</button>
+                    <button class="material-icons pct-button" id="wind-p5" title="+5">keyboard_double_arrow_right</button>
+                </div>
+            </div>
+            <div class="unit-stack-horiz">
+                <button class="unit-toggle output-toggle active">mph</button>
+                <button class="unit-toggle output-toggle">km/h</button>
+                <button class="unit-toggle output-toggle">knots</button>
+                <button class="unit-toggle output-toggle">m/s</button>
+            </div>
+            <div class="spacer">
+                <span class="wind-type" id="wind-angle-text">direct</span>
+                <span class="wind-type">&nbsp</span>
+                <span class="wind-type" id="wind-type">headwind</span>
+            </div>
+            <div class="new-wind-container">
+                <div class="box left-settings">
+                    <div class="inner-left-content">
+                        <div class="wind-profile-stack">
+                            <div class="wind-profile-header">Shelter</div>
+                            <button class="unit-toggle profile-toggle" id="mi-pace">
+                                <div class="profile-inner">
+                                    <span class="material-symbols-outlined">
+                                        location_city
+                                    </span>
+                                    <span class="material-symbols-outlined">
+                                        forest
+                                    </span>
+                                </div>
+                                <span>City/Forest</span>
+                            </button>
+                            <button class="unit-toggle profile-toggle active" id="mi-pace">
+                                <div class="profile-inner">
+                                    <span class="material-symbols-outlined">
+                                        home_work
+                                    </span>
+                                    <span class="material-symbols-outlined">
+                                        nature
+                                    </span>
+                                </div>
+                                <span>Suburbs</span>
+                            </button>
+                            <button class="unit-toggle profile-toggle" id="mi-pace">
+                                <div class="profile-inner">
+                                    <span class="material-symbols-outlined">
+                                        agriculture
+                                    </span>
+                                    <span class="material-symbols-outlined">
+                                        psychiatry
+                                    </span>
+                                </div>
+                                <span>Rural/Park</span>
+                            </button>
+                            <button class="unit-toggle profile-toggle" id="mi-pace">
+                                <div class="profile-inner">    
+                                    <span class="material-symbols-outlined">
+                                        wind_power
+                                    </span>
+                                </div>
+                                <span>None</span>
+                            </button>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="box center">
+                    <div class="compass-container">
+                        <div class="dial-container">
+                            <svg class="dial" viewBox="0 0 100 100">
+                                <circle class="dial-background" cx="50" cy="50" r="45"/>
+                                <circle class="dial-notch dial-notch-circle" cx="50" cy="12" r="10"/>
+                                <!-- <polygon class="dial-notch" points="50,10 45,20 55,20"/> -->
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" class ="dial-notch" id="wind-icon">
+                                    <path d="M460-160q-50 0-85-35t-35-85h80q0 17 11.5 28.5T460-240q17 0 28.5-11.5T500-280q0-17-11.5-28.5T460-320H80v-80h380q50 0 85 35t35 85q0 50-35 85t-85 35ZM80-560v-80h540q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43h-80q0-59 40.5-99.5T620-840q59 0 99.5 40.5T760-700q0 59-40.5 99.5T620-560H80Zm660 320v-80q26 0 43-17t17-43q0-26-17-43t-43-17H80v-80h660q59 0 99.5 40.5T880-380q0 59-40.5 99.5T740-240Z" transform="rotate(90, 480, -480)"/>
+                                </svg>
+                            </svg>
+                            <img src="images/runner-icon-256.png" class="dial-center" alt=""/>
+                        </div>                  
+                        <button class="compass-button north">N</button>
+                        <button class="compass-button northeast">NE</button>
+                        <button class="compass-button east">E</button>
+                        <button class="compass-button southeast">SE</button>
+                        <button class="compass-button south">S</button>
+                        <button class="compass-button southwest">SW</button>
+                        <button class="compass-button west">W</button>
+                        <button class="compass-button northwest">NW</button>
+                    </div>
+                </div>
+                <div class="box right-settings"></div>
+              </div>
+
+            <div class="spacer effort-container">
+                <span id="result-pre">results in an actual</span><span id="result-speed-or-pace">&nbsp;pace of</span><span id="results-of"></span>
+            </div>
+            <div class="pace-result-box">
+                <div class="left-dummy"></div>
+                <div class="pace-result-text">
+                    <span class="pace-result" id="output-text">7:20</span>
+                    <span class="convert-units" id="output-units">/mi</span>
+                </div>
+                <div class="left-dummy"></div>
+            </div>
+            <div class="spacer advanced-outer">
+                <div class="advanced-inner">
+                    <div class="adv-top-row">
+                        <a href="#pace-vs-effort" class="i-note">?</a>
+                        <span id="typical-or-custom">For a typical runner</span>
+                        <button class="material-icons adv-arrow" id="advanced-expand">settings</button>
+                    </div>
+                    <div class="advanced-content" id="advanced-content">
+                        <!-- Your advanced settings go here -->
+                        <div class="input-row">
+                            <div class="slug">
+                                <span class="rise-text" id='rise-post-text'>Runner:&nbsp;</span>
+                                <input class="hill-input" id="run" type="number" inputmode="decimal" step="1" value="180" min="0">
+                                <label for="run" class="rise-unit" id="rise-output-unit">cm</label>
+                                <span class="rise-text" id='rise-post-text'>,&nbsp;</span>
+                            </div>
+                            <div class="slug">
+                                <input class="hill-input" id="rise" type="number" inputmode="numeric" step="1" value="70">
+                                <label for="rise" class="rise-unit" id="rise-input-unit">kg</label>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="unit-togglebox">
+                                <button class="metric-toggle unit-toggle active">metric</button>
+                                <button class="metric-toggle unit-toggle">imperial</button>
+                            </div>
+                        </div>
+                        <p>Advanced setting 1</p>
+                        <p>Advanced setting 2</p>
+                        <p>Advanced setting 3</p>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="explainer-text">
             <h2 id="how-to-use">How to use<a class="material-icons up" href="#top">arrow_upward</a></h2>
@@ -36,7 +225,7 @@
     </main>
     <footer>
         Made by <a class="author-link" href="https://runningwritings.com">John Davis</a>
-        <a href="https://github.com/johnjdavisiv/gap-app" target="_blank"><i class="fa fa-github github-icon"></i></a>
+        <a href="https://github.com/johnjdavisiv/wind-calculator" target="_blank"><i class="fa fa-github github-icon"></i></a>
     </footer>
 </body>
 </html>

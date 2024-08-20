@@ -24,7 +24,8 @@ df <- read_csv("black_data_all.csv", show_col_types = FALSE) %>%
   #normalize weights
   mutate(reg_weight = reg_weight/sum(reg_weight)) %>%
   #Energetic cost
-  mutate(w_kg = energy_j_kg_m*speed_m_s)
+  mutate(w_kg = energy_j_kg_m*speed_m_s,
+         sd_w_kg = st_dev_joules*speed_m_s)
 
 #Fit a raw polynomial so we can port coefs
 poly_fit <- lm(w_kg ~ speed_m_s + I(speed_m_s^2) + category, 
@@ -50,6 +51,140 @@ df %>%
   theme(legend.position = "bottom")
 
 coef(poly_fit)
+
+
+
+
+# ---------  Plto for blgo post
+
+
+fnt <- 12
+fnt_ax <- 12
+fnt_title <- 13
+
+#Axis ticks
+tick_wd <- 0.08
+arrow_lwd <- 0.4
+ant_fnt <- 3.5
+ax_lwd <- 0.5
+
+
+ax_x_fnt <- 10
+
+
+col_1 <- "#377eb8"
+col_2 <- "#e41a1c"
+
+lwd <- 1.5
+alf <- 0.1
+
+ant_sz <- 5
+
+
+# Unify theme
+theme_mee <-   theme(plot.title = element_text(hjust=0.5, size = fnt_title),
+                     axis.line = element_line(color="black", linewidth=ax_lwd,
+                                              lineend = "square"),
+                     axis.ticks = element_line(color="black", linewidth=ax_lwd,
+                                               lineend = "square"),
+                     axis.ticks.length = unit(tick_wd, "cm"),
+                     axis.text = element_text(color = "black", size = fnt),
+                     axis.title = element_text(color = "black", size = fnt_ax),
+                     plot.background = element_rect(fill="white", color="white"),
+                     panel.grid = element_line(linewidth=0.25),
+                     plot.caption = element_text(size = fnt, face = "bold"))
+
+
+
+
+
+pt_sz <- 3
+lwd_er <- 1.5
+lwd_poly <- 1.5
+alf_poly <- 0.5
+
+jit_x <- 0.002
+jit_seed <- 12345
+
+
+#Pace breaks
+
+mi_breaks <-c(12,10,8,7,6,5.5,5)
+pace_breaks_mi <- 1/(mi_breaks*60/1609.344) #This is in m/s
+mi_labs <- sprintf("%d:%02.0f", floor(mi_breaks), 60*(mi_breaks - floor(mi_breaks)))
+
+x_limits <- c(1.9,5.5)
+x_breaks <- pace_breaks_mi
+
+y_limits <- c(7,28)
+y_breaks <- seq(10,25,by=5)
+
+
+leg_lwd <- 0.25
+
+
+#Filter to amke axes lok nices
+df_pred_plot <- df_pred %>% 
+  filter(speed_m_s >= 2.1,
+         speed_m_s <= 5.37) %>%
+  mutate(cat_cap = ifelse(category == "recreational", "Recreational", "Elite"),
+         cat_cap = factor(cat_cap, levels = c("Recreational", "Elite")))
+
+
+
+poly_plot <- df %>%
+  mutate(cat_cap = ifelse(category == "recreational", "Recreational", "Elite"),
+         cat_cap = factor(cat_cap, levels = c("Recreational", "Elite"))) %>%
+  ggplot(aes(x=speed_m_s, y=w_kg, color=cat_cap)) +
+  geom_linerange(aes(ymin=w_kg-sd_w_kg, ymax=w_kg+sd_w_kg),
+                 position = position_jitter(width=jit_x, height=0,seed=jit_seed),
+                 linewidth = lwd_er) + 
+  geom_point(size=pt_sz,
+             pch = 16,
+             position = position_jitter(width=jit_x, height=0,seed=jit_seed)) + 
+  #Polynomial lines
+  geom_line(aes(y=yhat_black), data=df_pred_plot,
+            linewidth = lwd_poly, alpha = alf_poly) + 
+  #Scales
+  scale_color_brewer(palette = "Set1") + 
+  guides(x = guide_axis(cap = "both"),
+         y = guide_axis(cap = "both")) +
+  scale_x_continuous(breaks = x_breaks, limits = x_limits,
+                     name = "Running pace (min/mi)",
+                     labels = mi_labs,
+                     expand = c(0,0)) + 
+  scale_y_continuous(breaks = y_breaks, limits = y_limits, 
+                     name = "Metabolic cost (W/kg)",
+                     expand = c(0,0)) + 
+  ggtitle("The metabolic cost of running rises in a non-linear fashion",
+          "Data from Black et al. 2018") + 
+  labs(caption = "RunningWritings.com") + 
+  theme_minimal() + 
+  #theme_bw() + 
+  theme_mee +
+  theme(legend.position = "inside", 
+        legend.position.inside = c(0.2,0.8),
+        legend.background = element_rect(fill="white", color="black", linewidth = leg_lwd),
+        legend.title = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank(),
+        plot.margin = unit(c(0.25, 0.25, 0.25, 0.5), "cm"),
+        plot.subtitle = element_text(hjust=0.5),
+        plot.caption.position = "plot",
+        legend.text=element_text(size=fnt)) 
+
+
+
+poly_plot
+
+
+ggsave("09 - Metabolic cost of running - from Black et al.png",
+       poly_plot, width = 2048, height = 1536, units="px")
+
+
+
+
+# --------
 
 
 
