@@ -325,6 +325,10 @@ main {
     min-width: 3ch;
 }
 
+.metric-toggle{
+    font-size:1em;
+}
+
 
 /* Spacer and within spacer text styling */
 
@@ -333,24 +337,14 @@ main {
     width:100%;
     display:flex;
     justify-content: center;
-    padding: 0.5em;
+    padding: 0.25em;
 }
 
-#pace-or-effort, .rise-unit{
-    font-weight:bold;
+.wind-type-spacer {
+    padding: 0.25em 0 0 0em;
 }
 
 
-
-
-
-.spacer {
-    font-size: 1.5em;
-    width:100%;
-    display:flex;
-    justify-content: center;
-    padding: 0.5em;
-}
 
 #pace-or-effort, .rise-unit{
     font-weight:bold;
@@ -362,12 +356,6 @@ main {
     align-items: center;
     justify-content: space-between;
     flex: 1;
-}
-
-
-.slug {
-    display:flex;
-    flex-direction: row;
 }
 
 
@@ -401,11 +389,22 @@ main {
 .advanced-outer {
     width: 100%;
     display:flex;
-    font-size: 1.5em;
+    font-size: 1em;
+}
+
+.advanced-content{
+    font-size:1.25em;
 }
 
 
+.adv-title{
+    font-size: 1.5em;
+    padding: 0 0 0.5em 0;
+}
 
+.adv-right{
+    font-size:1.25em;
+}
 
 .advanced-inner {
     border-radius: 5px;    
@@ -417,6 +416,7 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 0.25em 0 0.25em;
 }
 
 .advanced-content {
@@ -447,70 +447,41 @@ main {
 .input-row {
     display:flex;
     justify-content: center;
+    align-items: flex-end;
 }
 
 .slug {
     display:flex;
     flex-direction: row;
+    font-size:1.5em;
 }
 
-.hill-input {
-    font-size: 1em;
-    width: 3em;
+
+.height-weight-unit{
+    font-weight:bold;
+}
+
+
+.height-weight-input {
+    font-size:1em;
+    width: 5ch;
     margin: 0 0.3em;
 }
 
-
-
-
-
-/* 
-
-.advanced-inner{
-    flex:1;
-    display:flex;
-    width: 100%;
-    max-width: var(--width-limit);
-    border-radius: 12px;
+/* Smaller input box for height/weight */
+#height-ft, #height-in{
+    width:4ch
 }
 
-.adv-top-row{
-    width: 100%;
-    max-width: var(--width-limit);
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-}
-
-.adv-arrow {
-    font-size: 1.2em;
-    outline: none; 
-    cursor: pointer;
-    border: none;
-    padding: 0 0px;
-    margin: 4px;
-} */
-
-/* AHHH FIX TODO */
-/* .adv-arrow:hover{
-    color:var(--dark-accent);
-}
-
-.adv-arrow:active{
-    color:var(--active-color);
-} */
 
 
-
-/* Trygn a reset..... */
+/* Reset wind container with cleaner layout */
 .new-wind-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
     width: 100%;
     max-width: var(--width-limit);
-    max-width: 600px;
   }
   
   .left-settings, .right-settings {
@@ -521,25 +492,6 @@ main {
     flex: 0 0 auto;
     text-align: center;
   }
-
-/* Stuff for toggle tabls of profiel */
-/* 
-.wind-settings-box {
-    background-color: blue;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center; 
-    width: 100%;
-}
-
-
-.wind-profile-container {
-    flex: 0 0 auto; /
-    display: flex;
-    justify-content: flex-start;
-    background-color: green;
-} */
 
 .wind-profile-stack {
     flex: 0 0 auto;
@@ -555,6 +507,7 @@ main {
     align-items: center;
     font-weight: bold;
     font-size: 1.1em;
+    text-wrap: nowrap;
 }
 
 .profile-toggle {
@@ -578,6 +531,8 @@ button.profile-toggle.active:has(.profile-inner) .profile-inner span {
 .blank-button {
     background-color: white;
 }
+
+
 
 
 .compass-container {
@@ -767,6 +722,11 @@ input:checked + .slider:before {
     text-decoration: none;
 }
 
+.profile-note{
+    margin:auto;
+    margin-top: 0.25em;
+}
+
 
 
 /* Hover only on mice */
@@ -831,6 +791,10 @@ input:checked + .slider:before {
     .adv-arrow:hover {
         color:var(--dark-accent)
     }    
+
+    .invis:hover{
+        color:white;
+    }
 }
 
 
@@ -864,7 +828,7 @@ input:checked + .slider:before {
         font-size: 1.25em;
     }
     
-    .digit {
+    .digit, .wind-label, .wind-text {
         font-size: 1.4em;
     }
     .pct-button {
@@ -889,6 +853,20 @@ input:checked + .slider:before {
     .hill-unit, .hill-text, .unit-text {
         font-size: 0.8em;
     }
+
+    .adv-title{
+        font-size: 1em;
+        padding: 0 0 0.25em 0;
+    }
+
+    .advanced-content {
+        font-size:1em;
+    }
+/* 
+    .height-weight-input, .height-weight-unit {
+        font-size: 0.5em;
+        color:red;
+    } */
     
 }
 
@@ -932,8 +910,11 @@ input:checked + .slider:before {
     border: solid var(--link-hover-color) 2px;
 }
 
-
 /* At the bottom I guess */
+
+.invis{
+    color:white;
+}
 
 .hidden {
     display: none;

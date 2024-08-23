@@ -16,7 +16,7 @@
     <header>
         <div class="header-content">
             <a href="https://runningwritings.com"><img class="logo" id="top" src="images/RunningWritings-logo.png"></a>
-            <a class="home-link" href="https://apps.runningwritings.com">RW Apps</a>
+            <a class="home-link" href="https://apps.runningwritings.com">Running Writings</a>
             <nav>
                 <a href="#how-to-use">How to use</a>
                 <a href="#get-updates">Get updates</a>
@@ -50,6 +50,22 @@
                     </div>
                     <div class="unit-text" id="pace-units">/mi</div>
                 </div>
+                <div class="clock hidden" id="speed-dials">
+                    <div class="digitbox">
+                        <button class="material-icons svg-arrow" id="s1-up">expand_less</button>
+                        <div class="digit" id="s1">6</div>
+                        <button class="material-icons svg-arrow" id="s1-down">expand_more</button>
+                    </div>
+                    <div class="digitbox colon">
+                        <span class="digit">.</span>
+                    </div>
+                    <div class="digitbox">
+                        <button class="material-icons svg-arrow" id="s2-up">expand_less</button>
+                        <div class="digit" id="s2">0</div>
+                        <button class="material-icons svg-arrow" id="s2-down">expand_more</button>
+                    </div>
+                    <div class="unit-text" id="speed-units">mph</div>
+                </div>
                 <div class="unit-stack">
                     <button class="unit-toggle pace-toggle active" id="mi-pace">/mi</button>
                     <button class="unit-toggle pace-toggle" id="km-pace">/km</button>
@@ -61,7 +77,7 @@
             <div class="spacer toggle-box" id="pace-post">
                 <a href="#pace-vs-effort" class="i-note">?</a>
                 <div>
-                    <span id="pace-or-effort-pre"></span><span id="pace-or-effort">effort level&nbsp;</span><span>with a</span>
+                    <span id="pace-or-effort">effort level&nbsp;</span><span>with a</span>
                 </div>
                 <label class="switch">
                     <input type="checkbox" checked>
@@ -74,12 +90,13 @@
                     <button class="material-icons pct-button" id="wind-m1" title="-1">keyboard_arrow_left</button>
                 </div>
                 <div class="wind-text">
-                    <span class="incline-digits digit" id="wind-digit">
+                    <span class="incline-digits wind-digits digit" id="wind-digit">
                         5
                     </span>
                     <span class="wind-label ">
                         &nbsp;mph
                     </span>
+
                 </div>
                 <div class="arrow-box">
                     <button class="material-icons pct-button" id="wind-p1" title="+1">keyboard_arrow_right</button>
@@ -92,7 +109,7 @@
                 <button class="unit-toggle output-toggle">knots</button>
                 <button class="unit-toggle output-toggle">m/s</button>
             </div>
-            <div class="spacer">
+            <div class="spacer wind-type-spacer">
                 <span class="wind-type" id="wind-angle-text">direct</span>
                 <span class="wind-type">&nbsp</span>
                 <span class="wind-type" id="wind-type">headwind</span>
@@ -101,7 +118,7 @@
                 <div class="box left-settings">
                     <div class="inner-left-content">
                         <div class="wind-profile-stack">
-                            <div class="wind-profile-header">Shelter</div>
+                            <div class="wind-profile-header">Wind profile</div>
                             <button class="unit-toggle profile-toggle" id="mi-pace">
                                 <div class="profile-inner">
                                     <span class="material-symbols-outlined">
@@ -143,6 +160,7 @@
                                 </div>
                                 <span>None</span>
                             </button>
+                            <a href="#pace-vs-effort" class="i-note profile-note">?</a>
                         </div>
                         
                     </div>
@@ -188,27 +206,36 @@
                 <div class="advanced-inner">
                     <div class="adv-top-row">
                         <a href="#pace-vs-effort" class="i-note">?</a>
-                        <span id="typical-or-custom">For a typical runner</span>
-                        <button class="material-icons adv-arrow" id="advanced-expand">settings</button>
+                        <span class="adv-title", id="typical-or-custom">For a typical runner</span>
+                        <div class="adv-right">
+                            <button class="material-icons adv-arrow invis" id="advanced-reset">rotate_left</button>
+                            <button class="material-icons adv-arrow" id="advanced-expand">settings</button>
+                        </div>
                     </div>
-                    <div class="advanced-content" id="advanced-content">
-                        <!-- Your advanced settings go here -->
+                    <div class="advanced-content expanded" id="advanced-content">
+                        <!-- ADD "expanded" HERE ^^^ for testing -->
                         <div class="input-row">
-                            <div class="slug">
-                                <span class="rise-text" id='rise-post-text'>Runner:&nbsp;</span>
-                                <input class="hill-input" id="run" type="number" inputmode="decimal" step="1" value="180" min="0">
-                                <label for="run" class="rise-unit" id="rise-output-unit">cm</label>
-                                <span class="rise-text" id='rise-post-text'>,&nbsp;</span>
-                            </div>
-                            <div class="slug">
-                                <input class="hill-input" id="rise" type="number" inputmode="numeric" step="1" value="70">
-                                <label for="rise" class="rise-unit" id="rise-input-unit">kg</label>
-                            </div>
+                            <span class="input-text">Runner:&nbsp;</span>
+                            <input class="height-weight-input" id="height-ft" type="number" inputmode="decimal" step="1" value="5" min="3" max="8">
+                            <label for="height-ft" class="height-weight-unit" id="height-unit">ft</label>
+                            <input class="height-weight-input" id="height-in" type="number" inputmode="decimal" step="1" value="9" min="0" max="12">
+                            <label for="height-in" class="height-weight-unit" id="height-unit">in</label>
+                            <span class="input-text">&nbsp;and&nbsp;</span>
+                            <input class="height-weight-input" id="weight-lbs" type="number" inputmode="numeric" step="1" value="150">
+                            <label for="weight-lbs" class="height-weight-unit" id="weight-unit-lbs">lbs</label>
+                        </div>
+                        <div class="input-row hidden">
+                            <span class="input-text">Runner:&nbsp;</span>
+                            <input class="height-weight-input" id="height-cm" type="number" inputmode="decimal" step="1" value="180" min="0">
+                            <label for="height-cm" class="height-weight-unit" id="height-unit-cm">cm</label>
+                            <span class="input-text">&nbsp;and&nbsp;</span>
+                            <input class="height-weight-input" id="weight-kg" type="number" inputmode="numeric" step="1" value="70">
+                            <label for="weight-kg" class="height-weight-unit" id="weight-unit-kg">kg</label>
                         </div>
                         <div class="input-row">
                             <div class="unit-togglebox">
-                                <button class="metric-toggle unit-toggle active">metric</button>
-                                <button class="metric-toggle unit-toggle">imperial</button>
+                                <button class="metric-toggle unit-toggle active">imperial</button>
+                                <button class="metric-toggle unit-toggle">metric</button>
                             </div>
                         </div>
                         <p>Advanced setting 1</p>
