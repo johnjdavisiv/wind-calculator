@@ -168,6 +168,7 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    
 }
 
 
@@ -191,6 +192,10 @@ main {
     display: flex;
     align-items:center;
     justify-content: center;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Standard */
 }
 
 
@@ -220,15 +225,20 @@ main {
     
 }
 
-.wind-label {
+.wind-label, .wind-digits {
     font-size: 1.5em;
     font-family: 'Roboto', sans-serif;
     font-weight: bold;    
 }
 
-.wind-type {
+.wind-type, .wind-angle {
     font-weight: bold;
 }
+
+.wind-angle {
+    font-family: 'PT Mono', monospace;
+}
+
 
 
 /* Pace input */
@@ -282,7 +292,7 @@ main {
     flex: 0;
 }
 
-.output-toggle {
+.wind-toggle {
     width: 5.5ch
 }
 
@@ -323,6 +333,10 @@ main {
     margin: 0.2em 0em;
     cursor:pointer;
     min-width: 3ch;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Standard */
 }
 
 .metric-toggle{
@@ -499,6 +513,10 @@ main {
     flex-direction: column;
     align-items: left;
     max-width:fit-content;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Standard */
 }
 
 .wind-profile-header {
@@ -543,6 +561,10 @@ button.profile-toggle.active:has(.profile-inner) .profile-inner span {
     position: relative;
     width: var(--container-size);
     height: var(--container-size);
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Standard */
   }
   
   .dial-center {
@@ -618,10 +640,11 @@ button.profile-toggle.active:has(.profile-inner) .profile-inner span {
 
 
 
-  .north { top: 0; left: 50%; transform: translateX(-50%); }
+  .north { top: 0%; left: 50%; transform: translateX(-50%); }
   .northeast { top: 15%; right: 15%; }
   .east { top: 50%; right: 0; transform: translateY(-50%); }
-  .southeast { bottom: 15%; right: 15%; }
+  .southeast { bottom: 14.5%; right: 14.5%; }
+  /* No idea why southeasy needs 0.5% more to line up pixel perfect */
   .south { bottom: 0; left: 50%; transform: translateX(-50%); }
   .southwest { bottom: 15%; left: 15%; }
   .west { top: 50%; left: 0; transform: translateY(-50%); }
@@ -720,6 +743,10 @@ input:checked + .slider:before {
     align-items: center;
     justify-content: center; 
     text-decoration: none;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Standard */
 }
 
 .profile-note{
@@ -807,6 +834,15 @@ input:checked + .slider:before {
     main {
         padding: 0.25em 0.25em; 
     }
+
+    .wind-label, .wind-digits {
+        font-size: 1.3em
+    }
+
+    .pct-button {
+        font-size: 1.3em;
+        margin: 2px;
+    }
 }
 
 
@@ -828,8 +864,8 @@ input:checked + .slider:before {
         font-size: 1.25em;
     }
     
-    .digit, .wind-label, .wind-text {
-        font-size: 1.4em;
+    .digit, .wind-label, .wind-text, .wind-digits {
+        font-size: 1.1em;
     }
     .pct-button {
         font-size: 1.25em;

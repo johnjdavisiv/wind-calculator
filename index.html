@@ -77,7 +77,7 @@
             <div class="spacer toggle-box" id="pace-post">
                 <a href="#pace-vs-effort" class="i-note">?</a>
                 <div>
-                    <span id="pace-or-effort">effort level&nbsp;</span><span>with a</span>
+                    <span id="pace-or-effort">effort</span><span>&nbsp;with a</span>
                 </div>
                 <label class="switch">
                     <input type="checkbox" checked>
@@ -90,12 +90,11 @@
                     <button class="material-icons pct-button" id="wind-m1" title="-1">keyboard_arrow_left</button>
                 </div>
                 <div class="wind-text">
-                    <span class="incline-digits wind-digits digit" id="wind-digit">
-                        5
-                    </span>
-                    <span class="wind-label ">
-                        &nbsp;mph
-                    </span>
+                    <span class="wind-digits" id="wind-digit">5</span>
+                    <span class="wind-label">&nbsp;</span>
+                    <span class="wind-label" id="wind-units">mph</span>
+                    <span class="wind-label">&nbsp;</span>
+                    <span class="wind-label" id="wind-units">headwind</span>
 
                 </div>
                 <div class="arrow-box">
@@ -103,17 +102,13 @@
                     <button class="material-icons pct-button" id="wind-p5" title="+5">keyboard_double_arrow_right</button>
                 </div>
             </div>
-            <div class="unit-stack-horiz">
-                <button class="unit-toggle output-toggle active">mph</button>
-                <button class="unit-toggle output-toggle">km/h</button>
-                <button class="unit-toggle output-toggle">knots</button>
-                <button class="unit-toggle output-toggle">m/s</button>
+            <div class="unit-stack-horiz wind-unit-select">
+                <button class="unit-toggle wind-toggle active">mph</button>
+                <button class="unit-toggle wind-toggle">km/h</button>
+                <button class="unit-toggle wind-toggle">knots</button>
+                <button class="unit-toggle wind-toggle">m/s</button>
             </div>
-            <div class="spacer wind-type-spacer">
-                <span class="wind-type" id="wind-angle-text">direct</span>
-                <span class="wind-type">&nbsp</span>
-                <span class="wind-type" id="wind-type">headwind</span>
-            </div>
+
             <div class="new-wind-container">
                 <div class="box left-settings">
                     <div class="inner-left-content">
@@ -162,7 +157,6 @@
                             </button>
                             <a href="#pace-vs-effort" class="i-note profile-note">?</a>
                         </div>
-                        
                     </div>
                 </div>
                 <div class="box center">
@@ -212,24 +206,24 @@
                             <button class="material-icons adv-arrow" id="advanced-expand">settings</button>
                         </div>
                     </div>
-                    <div class="advanced-content expanded" id="advanced-content">
+                    <div class="advanced-content " id="advanced-content">
                         <!-- ADD "expanded" HERE ^^^ for testing -->
-                        <div class="input-row">
+                        <div class="input-row" id="imperial-input">
                             <span class="input-text">Runner:&nbsp;</span>
                             <input class="height-weight-input" id="height-ft" type="number" inputmode="decimal" step="1" value="5" min="3" max="8">
                             <label for="height-ft" class="height-weight-unit" id="height-unit">ft</label>
-                            <input class="height-weight-input" id="height-in" type="number" inputmode="decimal" step="1" value="9" min="0" max="12">
+                            <input class="height-weight-input" id="height-in" type="number" inputmode="decimal" step="1" value="9" min="0" max="11">
                             <label for="height-in" class="height-weight-unit" id="height-unit">in</label>
                             <span class="input-text">&nbsp;and&nbsp;</span>
-                            <input class="height-weight-input" id="weight-lbs" type="number" inputmode="numeric" step="1" value="150">
+                            <input class="height-weight-input" id="weight-lbs" type="number" inputmode="numeric" step="1" value="150" min="30" max="999">
                             <label for="weight-lbs" class="height-weight-unit" id="weight-unit-lbs">lbs</label>
                         </div>
-                        <div class="input-row hidden">
+                        <div class="input-row hidden" id="metric-input">
                             <span class="input-text">Runner:&nbsp;</span>
-                            <input class="height-weight-input" id="height-cm" type="number" inputmode="decimal" step="1" value="180" min="0">
+                            <input class="height-weight-input" id="height-cm" type="number" inputmode="decimal" step="1" value="180" min="0" max="275">
                             <label for="height-cm" class="height-weight-unit" id="height-unit-cm">cm</label>
                             <span class="input-text">&nbsp;and&nbsp;</span>
-                            <input class="height-weight-input" id="weight-kg" type="number" inputmode="numeric" step="1" value="70">
+                            <input class="height-weight-input" id="weight-kg" type="number" inputmode="numeric" step="1" value="68" min="15" max="500">
                             <label for="weight-kg" class="height-weight-unit" id="weight-unit-kg">kg</label>
                         </div>
                         <div class="input-row">
@@ -238,9 +232,6 @@
                                 <button class="metric-toggle unit-toggle">metric</button>
                             </div>
                         </div>
-                        <p>Advanced setting 1</p>
-                        <p>Advanced setting 2</p>
-                        <p>Advanced setting 3</p>
                     </div>
                 </div>
             </div>
