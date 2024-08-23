@@ -822,6 +822,11 @@ input:checked + .slider:before {
     .invis:hover{
         color:white;
     }
+
+    button.profile-toggle.active:has(.profile-inner):hover .profile-inner span {
+        /* only vc it looks slightly bad on desktop */
+        color:var(--primary-color);
+    }
 }
 
 

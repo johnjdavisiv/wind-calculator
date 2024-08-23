@@ -109,6 +109,9 @@ let startPointerAngle = 0;
 function updateDial() {
   updateResult();
   dial.style.transform = `rotate(${angle}deg)`;
+
+  // Adjust text
+  setWindType()
 }
 
 function getPointerAngle(clientX, clientY) {
@@ -388,8 +391,8 @@ output_buttons.forEach(button => {
 });
 
 
-var speed_dials = document.querySelector('#speed-dials')
-var pace_dials = document.querySelector('#pace-dials')
+const speed_dials = document.querySelector('#speed-dials')
+const pace_dials = document.querySelector('#pace-dials')
 
 function setMode(dial_mode) {
     if (dial_mode == "pace") {
@@ -463,6 +466,14 @@ function setWindUnits(button){
   //4 things can happen here: mi, km, mph, kmh.
   // [/mi] 
   wind_units.textContent = button.textContent;
+
+  if (wind_units.textContent == "m/s"){
+    wind_text.textContent = wind_val.toFixed(1)
+  } else {
+    wind_val = Math.round(wind_val)
+    wind_text.textContent = wind_val.toFixed(0)
+  }
+  
   //Do I need to od anthign else? 
 
 }
@@ -474,7 +485,7 @@ function setWindUnits(button){
 // TODO: Implement decimals for m/s
 
 let wind_text = document.querySelector("#wind-digit")
-let wind_int = parseInt(wind_text.textContent)
+let wind_val = parseFloat(wind_text.textContent)
 
 // In order left to right...
 const wind_m5 = document.querySelector("#wind-m5")
@@ -499,20 +510,17 @@ wind_p5.addEventListener('click', () => {
 
 function increment_wind(change){
 
-  
   // for m/s the big change should be 1.0, and small change 0.1
   // so big change (5) we divide by 5
   if (wind_units.textContent == "m/s") {
 
-    let ms_change
-    //Special case for m/s, display as 2.0
     
     if (Math.abs(change) === 5){
       console.log("FIVE CHANGER")
-      ms_change = change/5;      
+      change = change/5;      
     } else {
       // else it is a +/- 1 wch we want as 0.1
-      ms_change = change/10
+      change = change/10
     }
 
     /// now... 
@@ -523,13 +531,18 @@ function increment_wind(change){
 
   }
 
-    let proposed_int = wind_int + change
+    let proposed_val = wind_val + change
 
     // First, check if proposed change is allowed
-    if (proposed_int <= 50 && proposed_int >= 0) {
-      wind_int = proposed_int
+    if (proposed_val <= 50 && proposed_val >= 0) {
+      wind_val = proposed_val
         // Update text on page
-        wind_text.textContent = wind_int;
+
+        if (wind_units.textContent == "m/s") {
+          wind_text.textContent = wind_val.toFixed(1)
+        } else {
+          wind_text.textContent = wind_val.toFixed(0)
+        }
         //angle_text.textContent = angle_int;
 
         //Need to modify negateIncline to NOT flip what we just changed!
@@ -554,6 +567,37 @@ profile_buttons.forEach(button => {
     });
 });
 
+
+
+
+function setWindType(){
+  let wind_type = document.querySelector('#wind-type')
+  if (angle >= 337.5 || angle < 22.5) {
+    console.log("NORTH")
+    wind_type.textContent = "headwind"
+  } else if (angle >= 22.5 && angle < 67.5) {
+    wind_type.textContent = "crosswind"
+  } else if (angle >= 67.5 && angle < 112.5) {
+    console.log("STRAIGHT EAST")
+    wind_type.textContent = "lateral wind"
+  } else if (angle >= 112.5 && angle < 157.5) {
+    console.log("SOUTHEAST")
+    wind_type.textContent = "crosswind"
+  } else if (angle >= 157.5 && angle < 202.5) {
+    console.log("SOUTH")
+    wind_type.textContent = "tailwind"
+  } else if (angle >= 202.5 && angle < 247.5) {
+    console.log("SOUTHWEST")
+    wind_type.textContent = "crosswind"
+  } else if (angle >= 247.5 && angle < 292.5){
+    console.log("WEST")
+    wind_type.textContent = "lateral wind"
+  } else if (angle >= 292.5 && angle < 337.5){
+    console.log("NORTHWEST")
+    wind_type.textContent = "crosswind"
+  }
+
+}
 
 function setWindProfile(){
   //Do something...
