@@ -15,15 +15,35 @@ const HEIGHT_CM_DEFAULT = 178
 const WEIGHT_LBS_DEFAULT = 150
 const WEIGHT_KG_DEFAULT = 68
 
+const WEIGHT_ST_DEFAULT = 10
+const WEIGHT_ST_LB_DEFAULT = 10
+
+
+
+let runner_weight_kg = WEIGHT_KG_DEFAULT
+let runner_speed_ms // just read it first time from pace dials
+
+
+
+let units_mode = "usa"
+let effort_mode = true
+
+
 
 function updateResult(){
   console.log("result updated!")
-  console.log(angle)
+  //console.log(angle)
+
+  // CONSIDER: cool color changing gradient for headwind button
+  // ie angle changse it 
 
   // notice how we need to read height here, not externally in global space
+
+  updateHeightWeight()
+
   let foo = document.getElementById('height-ft')
 
-  console.log(`Height: ${foo.value}`)
+  console.log(runner_weight_kg)
 
   // ok bc of scope and such we need to read the values at all times! 
 }
@@ -38,41 +58,48 @@ function updateResult(){
 let heightFtInput = document.getElementById('height-ft')
 let heightInInput = document.getElementById('height-in')
 let weightLbsInput = document.getElementById('weight-lbs')
+
+
 let heightCmInput = document.getElementById('height-cm')
 let weightKgInput = document.getElementById('weight-kg')
+
+
+let heightFtUkInput = document.getElementById('height-ft-uk')
+let heightInUkInput = document.getElementById('height-in-uk')
+let weightStInput = document.getElementById('weight-st')
+let weightStLbInput = document.getElementById('weight-st-lb')
+
+
+
+
+// Can replace this with a selectorAll later, just add a specialc lass or use a fancy selection
 
 // Update results when any of these these change
 heightFtInput.addEventListener('input', updateResult);
 heightInInput.addEventListener('input', updateResult);
 weightLbsInput.addEventListener('input', updateResult);
+
+
 heightCmInput.addEventListener('input', updateResult);
 weightKgInput.addEventListener('input', updateResult);
 
+heightFtUkInput.addEventListener('input', updateResult);
+heightInUkInput.addEventListener('input', updateResult);
+weightStInput.addEventListener('input', updateResult);
+weightStLbInput.addEventListener('input', updateResult);
+
+
 // Convert the values to numbers if needed
-heightFt = parseFloat(heightFtInput.value);
-heightIn = parseFloat(heightInInput.value);
-weightLbs = parseFloat(weightLbsInput.value);
-heightCm = parseFloat(heightCmInput.value);
-weightKg = parseFloat(weightKgInput.value);
-
-
-
-
-// Now you can use these variables in your code
-console.log(`Height: ${heightFt} ft ${heightIn} in`);
-console.log(`Weight: ${weightLbs} lbs`);
-console.log(`Height: ${heightCm} cm`);
-console.log(`Weight: ${weightKg} kg`);
-
+// heightFt = parseFloat(heightFtInput.value);
+// heightIn = parseFloat(heightInInput.value);
+// weightLbs = parseFloat(weightLbsInput.value);
+// heightCm = parseFloat(heightCmInput.value);
+// weightKg = parseFloat(weightKgInput.value);
 
 
 // Effort vs pace toggle switch
-
-
 // Attach the event listener to the checkbox input
 
-
-let effortMode = true
 
 let effortToggle = document.querySelector('#pace-post .switch input[type="checkbox"]');
 effortToggle.addEventListener('change', function() {
@@ -80,10 +107,10 @@ effortToggle.addEventListener('change', function() {
 
   // if checkbox is checked, we are in EFFORT MODE
   if (effortToggle.checked){
-    effortMode = true;
+    effort_mode = true;
     effortText.innerHTML = "effort"
   } else {
-    effortMode = false;
+    effort_mode = false;
     effortText.innerHTML = "pace"
   }
   updateResult()
@@ -163,12 +190,9 @@ compassButtons.forEach((button, index) => {
   });
 });
 
-updateDial();
 
 
 // Setup the advanced dropdown box
-
-
 document.getElementById("advanced-expand").addEventListener("click", function() {
   var content = document.getElementById("advanced-content");
   var labelText = document.getElementById("typical-or-custom");
@@ -192,29 +216,44 @@ document.getElementById("advanced-expand").addEventListener("click", function() 
 // Toggle metric vs imperial
 
 const imp_metric_buttons = document.querySelectorAll('.metric-toggle');
+const imp_metric_divs = document.querySelectorAll('.ht-wt-div')
 
 imp_metric_buttons.forEach(button => {
     button.addEventListener('click', (e) => {
         // Remove active class from all buttons
         imp_metric_buttons.forEach(btn => btn.classList.remove('active'));
+        imp_metric_divs.forEach(btn => btn.classList.add('hidden'));
+        
         // Toggle the active state of the clicked button
         e.target.classList.toggle('active');
 
-        console.log(button.innerText)
 
-        document.getElementById('metric-input').classList.toggle('hidden')
-        document.getElementById('imperial-input').classList.toggle('hidden')
+        //messy ifelse for hiding
+        if (button.innerText == "usa") {
+          document.getElementById('imperial-input').classList.remove('hidden')
+        } else if (button.innerText == "uk") {
+          document.getElementById('uk-input').classList.remove('hidden')
+        } else {
+          document.getElementById('metric-input').classList.remove('hidden')
+        }
 
-
-        setHeightWeightUnits(button);
+        units_mode = button.textContent;
         //setOutputText(button);
         updateResult();
     });
 });
 
 
-function setHeightWeightUnits(button){
-  console.log("SWITCH UNITS")
+function updateHeightWeight(){
+  if (units_mode == "usa"){
+    runner_weight_kg = weightLbsInput.value/2.20462
+  } else if (units_mode == "uk") {
+    // stone lbs to kg
+    runner_weight_kg = (weightStInput.value*14 + weightStLbInput.value)/2.20462
+  } else {
+    runner_weight_kg = weightKgInput.value
+  }
+ 
 }
 
 
@@ -222,31 +261,21 @@ function resetHeightWeight(){
   console.log('FIRE UPDATE')
   heightFtInput.value = HEIGHT_FT_DEFAULT
   heightInInput.value = HEIGHT_IN_DEFAULT
-  heightCmInput.value = HEIGHT_CM_DEFAULT
   weightLbsInput.value = WEIGHT_LBS_DEFAULT
+
+  heightCmInput.value = HEIGHT_CM_DEFAULT
   weightKgInput.value = WEIGHT_KG_DEFAULT  
+
+  heightFtUkInput.value = HEIGHT_FT_DEFAULT
+  heightInUkInput.value = HEIGHT_IN_DEFAULT
+
+  weightStInput.value = WEIGHT_ST_DEFAULT
+  weightStLbInput.value = WEIGHT_ST_LB_DEFAULT
 }
 
 
 document.getElementById("advanced-reset").addEventListener('click', function(){
-  var content = document.getElementById("advanced-content");
-  var labelText = document.getElementById("typical-or-custom");
-  var resetButton = document.getElementById("advanced-reset");
-  var expandGear = document.getElementById("advanced-expand");
-
-    // Toggle the icon or text if needed
-    if (content.classList.contains("expanded")) {
-      expandGear.innerText = "settings";
-
-      resetHeightWeight();
-
-
-      // AND SET HEIGHT WEIGHt
-      console.log('RESET HEIGHT WEIGTH EHER')
-  } else {
-    // Else if it is not expanded, do nothing
-  }
-
+  resetHeightWeight();
 })
 
 
@@ -514,7 +543,7 @@ function increment_wind(change){
   // so big change (5) we divide by 5
   if (wind_units.textContent == "m/s") {
 
-    
+    // minor hack but prevents branching logic from getting messy
     if (Math.abs(change) === 5){
       console.log("FIVE CHANGER")
       change = change/5;      
@@ -522,17 +551,9 @@ function increment_wind(change){
       // else it is a +/- 1 wch we want as 0.1
       change = change/10
     }
-
-    /// now... 
-
-    // LEFT OFF HERE 
-    // BNNOT SURE HOW DO DO THE MS MATH separate variables? or no>?
-
-
   }
 
     let proposed_val = wind_val + change
-
     // First, check if proposed change is allowed
     if (proposed_val <= 50 && proposed_val >= 0) {
       wind_val = proposed_val
@@ -601,8 +622,14 @@ function setWindType(){
 
 function setWindProfile(){
   //Do something...
+
+  // probs needs buttona s input
+
+  // use button to lookup in the chart what our alpha coef shoudl be 
 }
 
+
+updateDial();
 updateResult();
 
 

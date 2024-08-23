@@ -206,9 +206,9 @@
                             <button class="material-icons adv-arrow" id="advanced-expand">settings</button>
                         </div>
                     </div>
-                    <div class="advanced-content " id="advanced-content">
+                    <div class="advanced-content" id="advanced-content">
                         <!-- ADD "expanded" HERE ^^^ for testing -->
-                        <div class="input-row" id="imperial-input">
+                        <div class="input-row ht-wt-div" id="imperial-input">
                             <span class="input-text">Runner:&nbsp;</span>
                             <input class="height-weight-input" id="height-ft" type="number" inputmode="decimal" step="1" value="5" min="3" max="8">
                             <label for="height-ft" class="height-weight-unit" id="height-unit">ft</label>
@@ -216,9 +216,9 @@
                             <label for="height-in" class="height-weight-unit" id="height-unit">in</label>
                             <span class="input-text">&nbsp;and&nbsp;</span>
                             <input class="height-weight-input" id="weight-lbs" type="number" inputmode="numeric" step="1" value="150" min="30" max="999">
-                            <label for="weight-lbs" class="height-weight-unit" id="weight-unit-lbs">lbs</label>
+                            <label for="weight-lbs" class="height-weight-unit" id="weight-unit-lbs">lb</label>
                         </div>
-                        <div class="input-row hidden" id="metric-input">
+                        <div class="input-row ht-wt-div hidden" id="metric-input">
                             <span class="input-text">Runner:&nbsp;</span>
                             <input class="height-weight-input" id="height-cm" type="number" inputmode="decimal" step="1" value="180" min="0" max="275">
                             <label for="height-cm" class="height-weight-unit" id="height-unit-cm">cm</label>
@@ -226,9 +226,22 @@
                             <input class="height-weight-input" id="weight-kg" type="number" inputmode="numeric" step="1" value="68" min="15" max="500">
                             <label for="weight-kg" class="height-weight-unit" id="weight-unit-kg">kg</label>
                         </div>
+                        <div class="input-row ht-wt-div hidden" id="uk-input">
+                            <span class="input-text">Runner:&nbsp;</span>
+                            <input class="height-weight-input" id="height-ft-uk" type="number" inputmode="decimal" step="1" value="5" min="3" max="8">
+                            <label for="height-ft-uk" class="height-weight-unit" id="height-unit">ft</label>
+                            <input class="height-weight-input" id="height-in-uk" type="number" inputmode="decimal" step="1" value="9" min="0" max="11">
+                            <label for="height-in-uk" class="height-weight-unit" id="height-unit">in</label>
+                            <span class="input-text">&nbsp;&&nbsp;</span>
+                            <input class="height-weight-input" id="weight-st" type="number" inputmode="decimal" step="1" value="10" min="3" max="80">
+                            <label for="weight-st" class="height-weight-unit">st</label>
+                            <input class="height-weight-input" id="weight-st-lb" type="number" inputmode="decimal" step="1" value="10" min="0" max="13">
+                            <label for="weight-st-lb" class="height-weight-unit">lb</label>
+                        </div>
                         <div class="input-row">
                             <div class="unit-togglebox">
-                                <button class="metric-toggle unit-toggle active">imperial</button>
+                                <button class="metric-toggle unit-toggle active">usa</button>
+                                <button class="metric-toggle unit-toggle">uk</button>
                                 <button class="metric-toggle unit-toggle">metric</button>
                             </div>
                         </div>

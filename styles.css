@@ -456,8 +456,6 @@ main {
 
 
 /* Style the advanced inputs */
-
-
 .input-row {
     display:flex;
     justify-content: center;
@@ -469,7 +467,6 @@ main {
     flex-direction: row;
     font-size:1.5em;
 }
-
 
 .height-weight-unit{
     font-weight:bold;
@@ -483,7 +480,7 @@ main {
 }
 
 /* Smaller input box for height/weight */
-#height-ft, #height-in{
+#height-ft, #height-in, #height-ft-uk, #height-in-uk, #weight-st, #weight-st-lb{
     width:4ch
 }
 
