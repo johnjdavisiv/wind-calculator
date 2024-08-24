@@ -1,7 +1,5 @@
 // Define aerodynamic constants
 
-
-
 // Main Workhorse function
 // Procedure should be:
 // - read the input variables from the app
@@ -9,103 +7,105 @@
 // - update results and display in app
 
 
-const HEIGHT_FT_DEFAULT = 5
-const HEIGHT_IN_DEFAULT = 10
-const HEIGHT_CM_DEFAULT = 178
 const WEIGHT_LBS_DEFAULT = 150
 const WEIGHT_KG_DEFAULT = 68
-
 const WEIGHT_ST_DEFAULT = 10
 const WEIGHT_ST_LB_DEFAULT = 10
 
 
+// wind profile vals
+const ALPHA_CITY = 0.4
+const ALPHA_SUBURBS = 0.3
+const ALPHA_RURAL = 0.16
+const ALPHA_NONE = 0.0
+
+const WIND_SPEED_DEFAULT = 2.2352 // 5 mph
 
 let runner_weight_kg = WEIGHT_KG_DEFAULT
+
+
+// Forward and lateral components
+// DEFINITIONS: Postiive forward compnent = HEADWIND (wind coming at runner)
+// 
+let wind_fwd_comp = 1*WIND_SPEED_DEFAULT
+let wind_lat_comp = 0
+// wind fwd comp is actually the real workhorse here. Reember it's in m.s alawys. 
+
+
 let runner_speed_ms // just read it first time from pace dials
-
-
-
+let pace_mode = "pace"
 let units_mode = "usa"
 let effort_mode = true
+let wind_ms = WIND_SPEED_DEFAULT
+let eq_speed = 3.35 // m/s, setup intiial so its correct
+
+
+let alpha_exp = ALPHA_SUBURBS
+
+
+
+
+
+
+// TODO:
+
+// Get runner speed m/s from input pace OR input speed
+
+// for now, just convert runner speed back to output unit and display
+
+// Later, will have antoehr variabl called effectivespeed that we use in same back-convert function
+
+// for now copy GAp code ont hat front
+
+
+// Then get the math working in a SEPAREATE index.html file to test cleanly
+
+// cf with R, try some test cases
+
+// Also need to fix output AND output units, but that will happen after calcs are done
+
 
 
 
 function updateResult(){
-  console.log("result updated!")
-  //console.log(angle)
-
+  
   // CONSIDER: cool color changing gradient for headwind button
-  // ie angle changse it 
+  // ie angle changse it   
+  // notice how we need to read weight here, not externally in global space
+  updateWeight()
+  readCurrentSpeed()
+  readCurrentWind()
 
-  // notice how we need to read height here, not externally in global space
-
-  updateHeightWeight()
-
-  let foo = document.getElementById('height-ft')
-
-  console.log(runner_weight_kg)
+  // do calcs
+  updateOutput(eq_speed)
 
   // ok bc of scope and such we need to read the values at all times! 
 }
 
-
-
-// AAHHHH DOES NOT WORKKK
-
-
 // Get variables from input boxes so we can manipulate them
 // Get the values from the input boxes
-let heightFtInput = document.getElementById('height-ft')
-let heightInInput = document.getElementById('height-in')
 let weightLbsInput = document.getElementById('weight-lbs')
-
-
-let heightCmInput = document.getElementById('height-cm')
 let weightKgInput = document.getElementById('weight-kg')
-
-
-let heightFtUkInput = document.getElementById('height-ft-uk')
-let heightInUkInput = document.getElementById('height-in-uk')
 let weightStInput = document.getElementById('weight-st')
 let weightStLbInput = document.getElementById('weight-st-lb')
-
 
 
 
 // Can replace this with a selectorAll later, just add a specialc lass or use a fancy selection
 
 // Update results when any of these these change
-heightFtInput.addEventListener('input', updateResult);
-heightInInput.addEventListener('input', updateResult);
 weightLbsInput.addEventListener('input', updateResult);
-
-
-heightCmInput.addEventListener('input', updateResult);
 weightKgInput.addEventListener('input', updateResult);
-
-heightFtUkInput.addEventListener('input', updateResult);
-heightInUkInput.addEventListener('input', updateResult);
 weightStInput.addEventListener('input', updateResult);
 weightStLbInput.addEventListener('input', updateResult);
 
-
-// Convert the values to numbers if needed
-// heightFt = parseFloat(heightFtInput.value);
-// heightIn = parseFloat(heightInInput.value);
-// weightLbs = parseFloat(weightLbsInput.value);
-// heightCm = parseFloat(heightCmInput.value);
-// weightKg = parseFloat(weightKgInput.value);
-
-
 // Effort vs pace toggle switch
 // Attach the event listener to the checkbox input
-
-
 let effortToggle = document.querySelector('#pace-post .switch input[type="checkbox"]');
 effortToggle.addEventListener('change', function() {
   let effortText = document.getElementById("pace-or-effort")
 
-  // if checkbox is checked, we are in EFFORT MODE
+  // if checkbox is checked, we are in EFFORT MODE - consdider swaping>?
   if (effortToggle.checked){
     effort_mode = true;
     effortText.innerHTML = "effort"
@@ -115,12 +115,6 @@ effortToggle.addEventListener('change', function() {
   }
   updateResult()
 })
-
-console.log(effortToggle)
-console.log(effortToggle.checked)
-
-
-
 
 
 // Compass wheel knob stuff
@@ -133,12 +127,27 @@ let isDragging = false;
 let startAngle = 0;
 let startPointerAngle = 0;
 
+
+function getWindComps(angleDegrees) {
+  // Convert the angle from degrees to radians
+  const angleRadians = angleDegrees * (Math.PI / 180);
+  
+  // Calculate the x and y components
+  const fwd_comp = Math.cos(angleRadians);
+  const lat_comp = Math.sin(angleRadians);
+  
+  return { fwd_comp: fwd_comp, lat_comp: lat_comp };
+}
+
+
+
 function updateDial() {
-  updateResult();
   dial.style.transform = `rotate(${angle}deg)`;
 
-  // Adjust text
+  // Adjust text (headwind, tailwind, etc)
   setWindType()
+
+  updateResult();
 }
 
 function getPointerAngle(clientX, clientY) {
@@ -192,12 +201,20 @@ compassButtons.forEach((button, index) => {
 
 
 
+// angle stuff
+
+
+
+
+
+
+
+
 // Setup the advanced dropdown box
 document.getElementById("advanced-expand").addEventListener("click", function() {
   var content = document.getElementById("advanced-content");
   var labelText = document.getElementById("typical-or-custom");
   var resetButton = document.getElementById("advanced-reset");
-
 
   content.classList.toggle("expanded");
   
@@ -244,38 +261,30 @@ imp_metric_buttons.forEach(button => {
 });
 
 
-function updateHeightWeight(){
+function updateWeight(){
   if (units_mode == "usa"){
-    runner_weight_kg = weightLbsInput.value/2.20462
+    runner_weight_kg = parseFloat(weightLbsInput.value)/2.20462
   } else if (units_mode == "uk") {
     // stone lbs to kg
-    runner_weight_kg = (weightStInput.value*14 + weightStLbInput.value)/2.20462
+    runner_weight_kg = (parseFloat(weightStInput.value)*14 + parseFloat(weightStLbInput.value))/2.20462
   } else {
-    runner_weight_kg = weightKgInput.value
+    runner_weight_kg = parseFloat(weightKgInput.value)
   }
  
 }
 
 
-function resetHeightWeight(){
-  console.log('FIRE UPDATE')
-  heightFtInput.value = HEIGHT_FT_DEFAULT
-  heightInInput.value = HEIGHT_IN_DEFAULT
+function resetWeight(){
+ 
   weightLbsInput.value = WEIGHT_LBS_DEFAULT
-
-  heightCmInput.value = HEIGHT_CM_DEFAULT
   weightKgInput.value = WEIGHT_KG_DEFAULT  
-
-  heightFtUkInput.value = HEIGHT_FT_DEFAULT
-  heightInUkInput.value = HEIGHT_IN_DEFAULT
-
   weightStInput.value = WEIGHT_ST_DEFAULT
   weightStLbInput.value = WEIGHT_ST_LB_DEFAULT
 }
 
 
 document.getElementById("advanced-reset").addEventListener('click', function(){
-  resetHeightWeight();
+  resetWeight();
 })
 
 
@@ -459,6 +468,8 @@ function setPaceText(button){
         // function like pass_speed_to_pace()
     }
 
+    setOutputText(button)
+
     updateResult();
 }
 
@@ -474,15 +485,9 @@ function setOutputText(button){
     // [/mi] 
     output_units.textContent = button.textContent;
     if (button.textContent == "/mi" || button.textContent == "/km") {
-        // UNIT CONVERTION TODO FIX HACK BUG    
-        // output_units.textContent = button.textContent;
-        // function like pass_pace_to_speed()
         output_pace_mode = 'pace'
     }
     if (button.textContent == "mph" || button.textContent == "km/h" || button.textContent == "m/s") {
-        // setMode("speed");
-        // speed_units.textContent = button.textContent;
-        // function like pass_speed_to_pace()
         output_pace_mode = 'speed'
     }
 }
@@ -510,9 +515,6 @@ function setWindUnits(button){
 
 
 // Wind magnitude 
-
-// TODO: Implement decimals for m/s
-
 let wind_text = document.querySelector("#wind-digit")
 let wind_val = parseFloat(wind_text.textContent)
 
@@ -545,7 +547,6 @@ function increment_wind(change){
 
     // minor hack but prevents branching logic from getting messy
     if (Math.abs(change) === 5){
-      console.log("FIVE CHANGER")
       change = change/5;      
     } else {
       // else it is a +/- 1 wch we want as 0.1
@@ -593,45 +594,175 @@ profile_buttons.forEach(button => {
 
 function setWindType(){
   let wind_type = document.querySelector('#wind-type')
+
+  //In case you want to use fancy termsl like quartering wind later
+
+  //Can also do color chang ehere?
+
   if (angle >= 337.5 || angle < 22.5) {
-    console.log("NORTH")
     wind_type.textContent = "headwind"
   } else if (angle >= 22.5 && angle < 67.5) {
     wind_type.textContent = "crosswind"
   } else if (angle >= 67.5 && angle < 112.5) {
-    console.log("STRAIGHT EAST")
     wind_type.textContent = "lateral wind"
   } else if (angle >= 112.5 && angle < 157.5) {
-    console.log("SOUTHEAST")
     wind_type.textContent = "crosswind"
   } else if (angle >= 157.5 && angle < 202.5) {
-    console.log("SOUTH")
     wind_type.textContent = "tailwind"
   } else if (angle >= 202.5 && angle < 247.5) {
-    console.log("SOUTHWEST")
     wind_type.textContent = "crosswind"
   } else if (angle >= 247.5 && angle < 292.5){
-    console.log("WEST")
     wind_type.textContent = "lateral wind"
   } else if (angle >= 292.5 && angle < 337.5){
-    console.log("NORTHWEST")
     wind_type.textContent = "crosswind"
   }
 
 }
 
-function setWindProfile(){
-  //Do something...
+function setWindProfile(button){
+  // Useful in case I need to tweak standards
+  if (button.id == "profile-city") {
+    alpha_exp = ALPHA_CITY
+  } else if (button.id == "profile-suburbs") {
+    alpha_exp = ALPHA_SUBURBS
+  } else if (button.id == "profile-rural") {
+    alpha_exp = ALPHA_RURAL
+  } else if (button.id == "profile-none") {
+    alpha_exp = ALPHA_NONE
+  }
+}
 
-  // probs needs buttona s input
 
-  // use button to lookup in the chart what our alpha coef shoudl be 
+// ----- Reading speed from digits
+function readCurrentSpeed(){
+  // Pace mode
+  if (pace_mode == "pace") {
+      // read mm:ss
+      var minute_val = parseInt(d1.textContent)
+      var sec_val = 10*parseInt(d2.textContent) + parseInt(d3.textContent)
+      var dec_minutes = minute_val + sec_val/60
+
+      const pace_units = document.querySelector('#pace-units').textContent
+
+      if (pace_units == "/mi"){
+          //Convert to m/s
+          input_m_s = 1609.344/(60*dec_minutes)
+      } else if (pace_units == "/km"){
+          //Convert to m/s
+          input_m_s = 1000/(60*dec_minutes)
+      }
+
+  // Speed mode
+  } else if (pace_mode == "speed") {
+      const speed_units = document.querySelector('#speed-units').textContent
+      //speed changes
+      var dec_speed = parseInt(s1.textContent) + parseInt(s2.textContent)/10
+
+          if (speed_units == "mph"){
+          //Convert to m/s
+          input_m_s = dec_speed*1609.344/3600
+      } else if (speed_units == "km/h"){
+          //Convert to m/s
+          input_m_s = dec_speed*1000/3600
+      } else if (speed_units == "m/s"){
+          input_m_s = dec_speed // lol
+      }
+  }
+}
+
+
+function readCurrentWind(){
+  var wind_units = document.querySelector('#wind-units').textContent
+  var wind_input = document.querySelector('#wind-digit').textContent
+
+  if (wind_units == "mph"){
+
+    wind_ms = wind_input*0.44704
+  } else if (wind_units == "km/h") {
+    wind_ms = wind_input/3.6
+  } else if (wind_units == "knots") {
+    wind_ms = wind_input*0.51444
+  } else if (wind_units == "m/s") {
+    wind_ms = wind_input
+  }
+  
+  const wind_components = getWindComps(angle);
+  
+  // Don't forget vector magntidue
+  wind_fwd_comp = wind_components['fwd_comp']*wind_ms
+  wind_lat_comp = wind_components['lat_comp']*wind_ms
+}
+
+
+/// m/s output to string
+let conv_dec
+
+const convert_dict = {
+    // functions to convert m/s to [output unit, as key]
+    '/mi':function (m_s){
+        // to decimal minutes per mile
+        conv_dec = 1609.344/(m_s*60)
+        return decimal_pace_to_string(conv_dec);
+    },
+    '/km':function (m_s){
+        // to decimal minutes per km
+        conv_dec = 1000/(m_s*60)
+        return decimal_pace_to_string(conv_dec);
+    },
+    'mph':function (m_s){
+        conv_dec = m_s*2.23694
+        return conv_dec.toFixed(1);
+    },
+    'km/h':function (m_s){
+        conv_dec = m_s*3.6
+        return conv_dec.toFixed(1);
+    },
+    'm/s':function (m_s){
+        // ez mode lol
+        return m_s.toFixed(2);
+    }
+}
+
+function decimal_pace_to_string(pace_decimal){
+    let pace_min = Math.floor(pace_decimal)
+    //Could be zero!! 
+    let pace_sec = (pace_decimal - pace_min)*60
+    //e.g. 9.50 --> 30 
+
+    //Deal with e.g. 3:59.9 --> 4:00.0
+    if (Math.round(pace_sec) === 60) {
+        pace_sec = 0
+        pace_min = pace_min+1;
+    } else {
+        pace_sec = Math.round(pace_sec);
+    }
+    //To formatted string
+    res = `${pace_min}:${pace_sec.toString().padStart(2,'0')}` 
+    return res
+}
+
+
+
+
+
+function updateOutput(eq_speed){
+  let out_text = document.querySelector('#output-text')
+  let out_units = document.querySelector('#output-units')
+  let convert_text = ''
+  let impossible_box = document.querySelector('#impossible-box')
+
+  if (!Number.isFinite(eq_speed)){
+      // If we get any funny business...hmm
+      convert_text = '🤔' // hmm or scream
+  } else {
+      const convert_fxn = convert_dict[out_units.textContent]
+      convert_text = convert_fxn(eq_speed)
+  }
+  out_text.textContent = convert_text
+
+  //Update text in doc
 }
 
 
 updateDial();
 updateResult();
-
-
-
-console.log('test')
