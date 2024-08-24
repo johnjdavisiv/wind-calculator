@@ -70,28 +70,14 @@ const AIR_DENSITY = 1.225 // kg/m^2, ISA air density at 15 C at sea level
 const AP_RATIO = 0.266 // percent of body surface area that is forward-facing, Ap = AP_RATIO*BSA
 // Reference: Pugh 1970, admittedly from only 9 young athletic males
 
-
-
-
-
-
 // TODO:
-
-// Get runner speed m/s from input pace OR input speed
-
 // for now, just convert runner speed back to output unit and display
-
 // Later, will have antoehr variabl called effectivespeed that we use in same back-convert function
-
-// for now copy GAp code ont hat front
-
-
 // Then get the math working in a SEPAREATE index.html file to test cleanly
 
 // cf with R, try some test cases
 
 // Also need to fix output AND output units, but that will happen after calcs are done
-
 
 
 

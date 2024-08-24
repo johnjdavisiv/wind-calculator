@@ -454,6 +454,16 @@ main {
     margin: 4px;
 }
 
+.dummy-container {
+    display:flex;
+}
+
+#dummy-spacer{
+    flex:1 1 auto;
+    width: 4ch;
+    max-width: 4ch;
+}
+
 
 /* Style the advanced inputs */
 .input-row {
