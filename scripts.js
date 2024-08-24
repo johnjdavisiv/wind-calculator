@@ -18,29 +18,57 @@ const ALPHA_CITY = 0.4
 const ALPHA_SUBURBS = 0.3
 const ALPHA_RURAL = 0.16
 const ALPHA_NONE = 0.0
+let alpha_exp = ALPHA_SUBURBS
+
+const WIND_REFERENCE_HEIGHT = 10 // meters above ground for wind forecasts and measurements
+const CHEST_HEIGHT = 1.5 // meters  (kinda arbitrary)
+
 
 const WIND_SPEED_DEFAULT = 2.2352 // 5 mph
 
 let runner_weight_kg = WEIGHT_KG_DEFAULT
 
 
-// Forward and lateral components
-// DEFINITIONS: Postiive forward compnent = HEADWIND (wind coming at runner)
-// 
-let wind_fwd_comp = 1*WIND_SPEED_DEFAULT
-let wind_lat_comp = 0
+
 // wind fwd comp is actually the real workhorse here. Reember it's in m.s alawys. 
+
+
 
 
 let runner_speed_ms // just read it first time from pace dials
 let pace_mode = "pace"
 let units_mode = "usa"
-let effort_mode = true
+let effort_mode = false
+
+
+// wind_ms is user input wind converted to m/s
+// true_wind_ms is our calculated wind after wind profile law (also in m/s)
+
 let wind_ms = WIND_SPEED_DEFAULT
+
+let true_wind_ms = windProfilePowerLaw(wind_ms, alpha_exp)
+// Forward and lateral components
+// DEFINITIONS: Postiive forward compnent = HEADWIND (wind coming at runner)
+// 
+let true_wind_fwd_comp = 1*true_wind_ms
+let true_wind_lat_comp = 0
+
 let eq_speed = 3.35 // m/s, setup intiial so its correct
 
 
-let alpha_exp = ALPHA_SUBURBS
+let chest_wind_ms = 1
+
+
+
+
+
+
+// Wind stuff setup
+const GRAVITY = 9.80665 // ISA gravity standard
+const DRAG_COEFFICIENT = 0.8 // Pretty typical values from experimental + CDF studies
+const AIR_DENSITY = 1.225 // kg/m^2, ISA air density at 15 C at sea level
+const AP_RATIO = 0.266 // percent of body surface area that is forward-facing, Ap = AP_RATIO*BSA
+// Reference: Pugh 1970, admittedly from only 9 young athletic males
 
 
 
@@ -76,8 +104,14 @@ function updateResult(){
   readCurrentSpeed()
   readCurrentWind()
 
+  // console.log(`input wind: ${wind_ms} m/s`)
+  // console.log(`chest height wind: ${true_wind_ms} m/s`)
+  // console.log(`chest height fwd: ${true_wind_fwd_comp} m/s`)
+  // console.log(`chest height lat: ${true_wind_lat_comp} m/s`)
+
   // do calcs
   updateOutput(eq_speed)
+  console.log("updated")
 
   // ok bc of scope and such we need to read the values at all times! 
 }
@@ -104,14 +138,17 @@ weightStLbInput.addEventListener('input', updateResult);
 let effortToggle = document.querySelector('#pace-post .switch input[type="checkbox"]');
 effortToggle.addEventListener('change', function() {
   let effortText = document.getElementById("pace-or-effort")
+  let resultPreText = document.getElementById('result-pre')
 
   // if checkbox is checked, we are in EFFORT MODE - consdider swaping>?
   if (effortToggle.checked){
-    effort_mode = true;
-    effortText.innerHTML = "effort"
-  } else {
     effort_mode = false;
     effortText.innerHTML = "pace"
+    resultPreText.innerText = "is the same effort as"
+  } else {
+    effort_mode = true;
+    effortText.innerHTML = "calm-day effort"
+    resultPreText.innerText = "will result in"
   }
   updateResult()
 })
@@ -274,8 +311,7 @@ function updateWeight(){
 }
 
 
-function resetWeight(){
- 
+function resetWeight(){ 
   weightLbsInput.value = WEIGHT_LBS_DEFAULT
   weightKgInput.value = WEIGHT_KG_DEFAULT  
   weightStInput.value = WEIGHT_ST_DEFAULT
@@ -290,8 +326,6 @@ document.getElementById("advanced-reset").addEventListener('click', function(){
 
 
 // Dial and input controls
-
-
 // --- Incrementing pace dials --- 
 
 //First incrementor
@@ -685,12 +719,14 @@ function readCurrentWind(){
   } else if (wind_units == "m/s") {
     wind_ms = wind_input
   }
+
+  true_wind_ms = windProfilePowerLaw(wind_ms, alpha_exp)
   
   const wind_components = getWindComps(angle);
   
   // Don't forget vector magntidue
-  wind_fwd_comp = wind_components['fwd_comp']*wind_ms
-  wind_lat_comp = wind_components['lat_comp']*wind_ms
+  true_wind_fwd_comp = wind_components['fwd_comp']*true_wind_ms
+  true_wind_lat_comp = wind_components['lat_comp']*true_wind_ms
 }
 
 
@@ -762,6 +798,134 @@ function updateOutput(eq_speed){
 
   //Update text in doc
 }
+
+
+
+
+
+//  Ok, doing the math...
+// First, deal with pace mode: you ACTUALLY RAN this pace, what was calm-day effort?
+//
+//
+//
+//
+
+
+
+function getBodySurfaceArea(weight_kg) {
+  // get body surface area in m**2 from weight in kg
+  // Valid for weight from 10 to 250 kg
+  // Reference: Livingston and Lee 2001
+  return 0.1173*weight_kg**0.6466
+}
+
+
+
+const DA_SILVA_SLOPE = 6.13
+
+let bsa
+let runner_Ap
+
+
+
+
+
+function getAp(bsa){
+  // get projected frontal area, in m**2, from body surface area and Pugh's A_p ratio
+  return AP_RATIO*bsa
+}
+
+
+// This is "the" drag equation
+function calcDragForce(relativeV, Ap) {
+  
+  // Relative v should be airflow RELATIVE TO RUNNER, not actual wind speed
+  // so it needs to be fwd vel of runner + fwd_comp of wind. and since fwd_comp is defined as headwsnid
+  // we really can do runner_speed_ms + fwd_comp
+  
+  // care with pace mode though...
+  
+  
+  // Calculate the sign of relative velocity
+  const pm_sign = Math.sign(relativeV);
+  
+  // Calculate drag force using the drag equation
+  const dragForce = pm_sign * 0.5 * AIR_DENSITY * (relativeV ** 2) * DRAG_COEFFICIENT * Ap;
+  
+  // CARE with + and - !!! 
+  
+  return dragForce;
+}
+
+
+// Black et al polynomial for metabolic cost in TRUE STILL AIR (ie on a treadmill)
+function calcTreadMetCost(speed_ms, isElite) {
+  // isElite is a binary value: 0 (no) / 1 (yes)
+  // speed is in m/s
+  // The function returns the average metabolic cost of treadmill running in Watts/kg  
+  const metabolicCost = 8.09986 
+                      + 0.12910 * speed_ms 
+                      + 0.48105 * (speed_ms ** 2) 
+                      - 1.13918 * isElite;
+  return metabolicCost;
+}
+
+
+
+
+// Function to calculate the change in metabolic power AS A PERCENTAGE of original met. power in W/kg
+// using as percenta; total_met_power = treadmill_met_power*(1+delta_met_power_pct/100),
+
+// delta comes from thsi eqn vvv
+
+function calcDeltaMetPowerPct(drag_force) {
+  // Body weight in Newtons
+  const bodyWeightNewtons = runner_weight_kg * GRAVITY;
+  
+  // Calculate horizontal impeding force as a percentage of body weight
+  const impedingForcePctBW = (drag_force / bodyWeightNewtons) * 100;
+  
+  // Calculate the change in metabolic power as a percentage
+  const deltaMetPowerPct = DA_SILVA_SLOPE * impedingForcePctBW;
+  
+  return deltaMetPowerPct;
+}
+
+
+
+
+// Wind profiel adjustments
+
+// Function to calculate wind velocity at a specific height using the power law
+function windProfilePowerLaw(vRef, alpha) {
+  // vRef: reference wind velocity in m/s
+  // z: height above ground of desired wind velocity, in meters
+  // zRef: height above ground of reference wind velocity, in meters
+  // alpha: power law exponent, typically 0.11 - 0.40 (higher for more urban areas)
+  
+  const vZ = vRef * (CHEST_HEIGHT / WIND_REFERENCE_HEIGHT)**alpha;
+  return vZ;
+}
+
+
+
+function doWindCalcs(){
+  bsa = getBodySurfaceArea(runner_weight_kg)
+  runner_Ap = getAp(bsa)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 updateDial();
