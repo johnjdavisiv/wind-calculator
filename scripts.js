@@ -7,8 +7,9 @@ const WEIGHT_ST_LB_DEFAULT = 10
 
 const GRID_MAX_M_S = 12 // m/s, whats max value of our lookup table speed? min is zero ofc 
 const GRID_STEP = 0.01 // m/s, how fine-grained is lookup table?
+// Finer grids are slower, calculation-wise
 
-const IS_ELITE = 1 // use elite runner metabolic cost?
+const IS_ELITE = 1 // use elite runner metabolic cost? (barely matters at all, like 1-3 sec/mi)
 // I do not think this matters much since it is a constant offset and we just look at changes
 // Coudl add checkbox to customizer box
 
@@ -24,7 +25,7 @@ const CHEST_HEIGHT = 1.5 // meters  (kinda arbitrary)
 
 const WIND_SPEED_DEFAULT = 2.2352 // 5 mph
 const RUNNER_SPEED_DEFAULT = 3.83176 // 7:00/mi
-const DEFAULT_OUTPUT_SPEED_M_S = 3.5 // fix later once you do calcs
+const DEFAULT_OUTPUT_SPEED_M_S = 3.915669 // fix later once you do calcs
 
 
 let output_speed_ms = DEFAULT_OUTPUT_SPEED_M_S
@@ -49,8 +50,6 @@ let runner_Ap = getAp(bsa)
 
 
 // wind fwd comp is actually the real workhorse here. Reember it's in m.s alawys. 
-
-
 let input_m_s = RUNNER_SPEED_DEFAULT // just read it first time from pace dials
 let pace_or_speed = "pace"
 let units_mode = "usa"
@@ -76,7 +75,6 @@ let chest_wind_ms = 1
 
 
 function updateResult(){
-
   // Wrapper function to attache verything to.
   
   // CONSIDER: cool color changing gradient for headwind button
@@ -99,8 +97,6 @@ let weightStInput = document.getElementById('weight-st')
 let weightStLbInput = document.getElementById('weight-st-lb')
 
 
-
-// Can replace this with a selectorAll later, just add a specialc lass or use a fancy selection
 
 // Update results when any of these these change
 weightLbsInput.addEventListener('input', updateResult);

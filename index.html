@@ -10,12 +10,12 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <script src="scripts.js" defer></script>
-    <!-- <script defer data-domain="apps.runningwritings.com" src="https://plausible.io/js/script.js"></script> -->
+    <script defer data-domain="apps.runningwritings.com" src="https://plausible.io/js/script.js"></script>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <a href="https://runningwritings.com"><img class="logo" id="top" src="images/RunningWritings-logo.png"></a>
+            <a href="https://apps.runningwritings.com"><img class="logo" id="top" src="images/RunningWritings-logo.png"></a>
             <a class="home-link" href="https://apps.runningwritings.com">Running Writings</a>
             <nav>
                 <a href="#how-to-use">How to use</a>
@@ -75,7 +75,7 @@
                 </div>
             </div>
             <div class="spacer toggle-box" id="pace-post">
-                <a href="#pace-vs-effort" class="i-note">?</a>
+                <a href="#effort-vs-pace" class="i-note">?</a>
                 <div>
                     <span id="pace-or-effort">pace</span><span>&nbsp;with a</span>
                 </div>
@@ -155,7 +155,7 @@
                                 </div>
                                 <span>None</span>
                             </button>
-                            <a href="#pace-vs-effort" class="i-note profile-note">?</a>
+                            <a href="#wind-profile-mode" class="i-note profile-note">?</a>
                         </div>
                     </div>
                 </div>
@@ -199,7 +199,7 @@
             <div class="spacer advanced-outer">
                 <div class="advanced-inner">
                     <div class="adv-top-row">
-                        <span class="dummy-container"><a href="#pace-vs-effort" class="i-note">?</a><span id="dummy-spacer"></span></span>
+                        <span class="dummy-container"><a href="#height-weight-info" class="i-note">?</a><span id="dummy-spacer"></span></span>
                         <span class="adv-title", id="typical-or-custom">For a typical runner</span>
                         <div class="adv-right">
                             <button class="material-icons adv-arrow invis" id="advanced-reset">rotate_left</button>
@@ -238,7 +238,116 @@
         </div>
         <div class="explainer-text">
             <h2 id="how-to-use">How to use<a class="material-icons up" href="#top">arrow_upward</a></h2>
-            <p>Explainer text goes here</p>
+
+            <p>This app calculates the effects of headwinds and tailwinds on your pacing when you run. It uses a combination of aerodynamics calculations and empirical data on the metabolic cost to calculate an “equivalent” pace or effort level when running into or with a wind of a given strength.</p>
+            <p>All you need to input is the pace (or effort level) you are running at, and the direction of the wind relative to the runner. You can click on the compass directions to “snap” the wind to a specific orientation, or click and drag the dial to get a feel for how crosswinds of varying degrees.</p>
+            <p>The calculator accepts running pace in minutes per mile (/mi) or minutes per kilometer (/km), as well as running speed in miles per hour (mph), kilometers per hour (km/h), or meters per second (m/s). Wind speed can be entered in mph, km/h, knots, or meters per second (m/s).</p>
+            <p>When entering wind speed, you should enter it as the <strong>wind speed measured in a stationary position </strong>(i.e. the wind speed as you'd see in a weather app on your phone, or that you'd measure with an anemometer).</p>
+            <p>In other words, this calculator already accounts for the fact that running at 10 mph into a 5 mph headwind creates an effective 15 mph airspeed—you do not (and should not) need to do this math yourself. Likewise, the calculator already accounts for the metabolic cost of overcoming air resistance on a calm day.</p>
+            <p>Also note that the compass directions (N, NE, E, …) are<em> illustrative only</em>. Obviously, if you are running south into a wind <em>from </em>the south, you are encountering a direct headwind, and you would have the calculator pointed to “north”—hence the top-down view of the runner and the text annotation.</p>
+            <p>For more advanced use-cases, you can customize the height and the weight of the runner and the wind profile used to calculate the true chest-level wind that you experience in different settings. See below for details on those fronts.</p>
+            <h3>How the wind adjusted pace calculations work<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <p>Conceptually, calculating the effects of headwinds and tailwinds on pacing is relatively simple. The calculator uses the following procedure:</p>
+            <ol>
+                <li>
+                    <p>Calculate the metabolic cost of running at the given speed in calm air.</p>
+                </li>
+                <li>
+                    <p>Use the drag equation to calculate the additional horizontal force that the runner experiences while moving through the air, accounting for both the runner's overground velocity and the wind velocity.</p>
+                </li>
+                <li>
+                    <p>Calculate the metabolic cost of overcoming the opposing horizontal force caused by the drag forces (or, in the case of a strong tailwind, the reduction in metabolic cost from the assistive force).</p>
+                </li>
+                <li>
+                    <p>Find the calm-air running speed which would produce the same total metabolic cost, when adding the metabolic cost of overcoming drag forces to the metabolic cost of overcoming air resistance on a calm day.</p>
+                </li>
+            </ol>
+            <p>A similar process works for finding the equivalent effort for a given pace.</p>
+            <p>In <em>practice</em>, the calculations get a bit tedious. I have a full write-up on <strong>the science of headwinds and tailwinds for runners</strong> on my main site, so check that out if you are interested in the specifics.</p>
+            <h3>Are these wind calculations accurate?<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <p><strong>In a word, yes</strong>. The plots below show the predicted metabolic cost of running at various headwind speeds (solid line) compared against real wind-tunnel data from <a href="https://pubmed.ncbi.nlm.nih.gov/5574828/">Pugh 1971</a>. This calculator was not “tuned” to the runner's data at all, aside from customizing the height and weight (and using no wind profile adjustment, since the measured wind speed inside the wind tunnel is the true wind speed encountered by the runner).</p>
+            <img src="https://runningwritings.com/wp-content/uploads/2024/08/05-Predicted-versus-actual-effect-of-headwinds-and-tailwinds-on-running-cost-1536x1536.png">
+            <p>The predicted metabolic costs line up very well for headwinds as strong as 15 mph, and the error is not too bad even into a 20 mph headwind. The reason the calculator predicts too high of a metabolic cost in extreme headwinds is likely because runners “lean into” extreme headwinds to generate lift, which reduces the metabolic cost of running slightly.</p>
+            <p>Do see the <a href="#limitations">limitations section</a> below for some caveats, though.</p>
+            <h3>Calculating the effects of crosswinds<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <p>This wind calculator uses principles of vector addition to deal with crosswinds: for a given crosswind, the “effective” headwind is calculated using trigonometry. For example, running into a 10 mph diagonal crosswind at 45 degrees east results in a 7.1 mph effective headwind.</p>
+            <p>For now, the pure lateral component of a crosswind is ignored. The potential effects of ignoring lateral effects are discussed in the limitations section. The main reason they are ignored is that there is no research on the metabolic cost of resisting a lateral force during running. I suspect these costs are not very big, though, since runners deal with lateral forces just fine when running on a track without any major effects on their pacing.</p>
+            <h2 id="height-weight-info">Do height and weight affect pacing in the wind?<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <p><strong>No, not really</strong>. Height and weight have countervailing effects at different points in the calculation process. On one hand, taller and heavier runners have more forward-facing surface area, and thus experience a greater absolute drag force.</p>
+            <p>However, since the metabolic cost of overcoming horizontal forces is a function of the magnitude of the force <em>relative to body mass</em>, greater drag forces are less metabolically costly for a heavier runner. Height and weight effects <em>mostly </em>cancel out, but for precise calculations—or for comparisons with experimental data—you can adjust your body weight using the dropdown. You'll notice that smaller runners are slightly more affected by strong headwinds, but you need to use enormous differences (e.g. 200 lbs vs 100 lbs) to see an effect.</p>
+            <p>The reason you only need to input weight and not height is because the equation the app uses to calculate body surface area (from <a href="https://pubmed.ncbi.nlm.nih.gov/11500314/">Livingston and Lee 2001</a>) requires only weight, and actually outperforms older equations that used both height and weight.</p>
+            <h2 id="wind-profile-mode">Wind profile: nominal versus actual wind speeds<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <p>Wind measurements are made at weather stations positioned 33 feet (10 meters) off the ground, typically away from major obstacles like buildings and trees. For a runner at ground level, the actual wind speed you encounter is affected by the terrain and obstacles around you: even for the same nominal wind speed, you will encounter less wind in a busy suburban area than on a lonely country road.</p>
+            <p>These ground level effects can be significant: in a city or a dense forest, the true wind speed at chest height (~1.5 meters off the ground) can be less than half the wind speed up at 10 meters off the ground where the wind speed is typically measured and forecast.</p>
+            <p>The wind profile settings allow you to use an empirical model in meteorology called the <a href="https://en.wikipedia.org/wiki/Wind_profile_power_law">wind profile power law</a> to attempt to adjust for the effects of shelter and terrain on the true wind speed you encounter.</p>
+            <p>The table below shows the recommended settings for various conditions you might encounter in your training.</p>
+            <table>
+                <thead>
+                  <tr>
+                    <th>Setting</th>
+                    <th>&alpha;</th>
+                    <th>Recommended Wind Profile Mode</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Urban</td>
+                    <td>0.40</td>
+                    <td>Urban areas and or downtowns with tightly-packed tall buildings, dense forest</td>
+                  </tr>
+                  <tr>
+                    <td>Suburban</td>
+                    <td>0.30</td>
+                    <td>Suburban area or town center, park with some trees and buildings</td>
+                  </tr>
+                  <tr>
+                    <td>Rural</td>
+                    <td>0.16</td>
+                    <td>Rural road, open prairie land</td>
+                  </tr>
+                  <tr>
+                    <td>None</td>
+                    <td>0.00</td>
+                    <td>True ground-level wind measurements (e.g. wind gauge for track events)</td>
+                  </tr>
+                </tbody>
+              </table>
+            <p>The default is “Suburbs” simply because that's the most common training location for the runners that I coach.</p>
+            <p>Notably, if you have a true ground-level wind speed—for example, from an anemometer or a wind gauge kit used to measure wind speeds in sprint events—you should set the wind profile to “None.” Setting the wind profile to None applies <em>no </em>correction, i.e. it assumes that your input wind speed is exactly the air speed that the runner encounters.</p>
+            <p>Because “tube-style” wind gauges measure only the head-on component of wind (in the direction they are pointing), you should also set the wind direction in this app to be a direct headwind, i.e. “N” on the compass rose, if you are using a track and field wind gauge as your source of wind speed. The same is not true for normal anemometers used for weather measurements.</p>
+            <h2 id="effort-vs-pace">Effort versus pace when running in the wind<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <p>This calculator has two modes: effort mode and pace mode.</p>
+            <p>In effort mode, the calculator answers this question: “If I run at the effort level that <em>would </em>produce 7:00/mi in calm conditions, what would the actual pace be given the current wind conditions?”</p>
+            <p>Effort mode is what I use when I'm adjusting workout paces for windy days. I know the athlete's target pace in calm conditions, and I want to know what they should aim for when running into (or with) the wind.</p>
+            <p>In pace mode, the calculator answers this question: “If I <em>actually ran </em>7:00/mi in the current wind conditions, how fast would I have gone in calm conditions?”</p>
+            <p>Pace mode is useful if you've already done your run (or race) and want to back-calculate your effective effort, given the splits you actually ran during the segments into, or with, the wind.</p>
+            <h2 id="limitations">Limitations<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <p>There are three main sources of uncertainty that put some limits on the accuracy of these headwind and tailwind calculations.</p>
+            <p>The first is the uncertainty in the wind profile. The wind profile power law is only an approximation, and hyper-local terrain can significantly affect the true wind speed you encounter. If you have extensive knowledge of meteorology or civil engineering and have ideas for improvements on this front, <a href="mailto:john@runningwritings.com">send me an email.</a></p>
+            <p>Otherwise, if you have actual ground-level wind speed, you can just set the wind profile to None and use your true wind speed. I have vague hopes of running watches eventually incorporating a wind sensor, which would negate this limitation completely.</p>
+            <p>The second source of uncertainty is the metabolic cost of lateral horizontal forces from crosswinds. Right now, the calculator only accounts for the opposing or assistive forces in the direction you are running—for example, with a 10 mph diagonal crosswind at 45 degrees, the calculator only considers the 7 mph headwind component to have a metabolic cost; the 7 mph lateral component is assumed to generate no metabolic cost.</p>
+            <p>This is probably an unrealistic assumption, but there is no research yet on the metabolic cost of overcoming lateral forces. I am emailing a few researchers for their thoughts and I'll update the calculator if anyone has any clever ideas.</p>
+            <p>The third is the individual variation in the metabolic cost of running, and in the metabolic cost of overcoming opposing horizontal forces. I am currently working on getting access to the individual-level data I'd need to construct uncertainty intervals around the “point estimate” given by the wind calculator.</p>
+            <p>There are a few other minor limitations, like the fact that this calculator assumes you are near sea level (for air density effects) but those are only relevant at very high altitudes and fairly fast speeds.</p>
+            <h3>What about running on a track?<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <p>Running on a track is tricky because you get exposed to all 360 degrees of the wind each lap. Calculating the net metabolic effect would require a line integral through a vector field. Not too complicated to numerically approximate, and the calculator already has the basic equations to do it, but it's probably something I'll split off into a more specialized calculator—<a href="https://runningwritings.eo.page/news-and-notes-signup"><strong>join my email newsletter</strong></a> if you want to find out when I release that app.</p>
+            <p>The same line integral trick should work for calculating a “net wind effect” across an entire running route, but that would require uploading a .gpx file. That's a heavier lift, so don't get your hopes up.</p>
+            <h3>What about drafting?<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <p>I'm working on it. Once the drag equation and metabolic cost calculations are complete, it's not that much extra trouble to calculate the additional effects from drafting behind another runner, thanks to the raft of excellent experimental and computational research on drafting in running that's come out in the wake of the Nike Breaking2 Project and the Ineos 1:59 Challenge.</p>
+            <p>However, because drafting is most common on the track, I probably will not implement drafting calculations until I have a track-lap wind effect calculator as well. Again, <a href="https://runningwritings.eo.page/news-and-notes-signup"><strong>join my email newsletter</strong></a> if you want to know when that comes out! I will also write up an accompanying article on the science of drafting.</p>
+            <h3>Will this calculator work for cycling?<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <p><strong>No</strong>, for two reasons. First, the drag coefficient and frontal area are different in running versus cycling. Second, and more importantly, the calculations under the hood use two empirical datasets for metabolic cost: <a href="https://pubmed.ncbi.nlm.nih.gov/28459289/">Black et al. 2018</a>, to calculate the metabolic cost of running at a given speed without air resistance, and <a href="https://pubmed.ncbi.nlm.nih.gov/35834628/">Da Silva et al. 2022</a>, to calculate the metabolic cost of overcoming a given horizontal opposing force.</p>
+            <p>Cycling and running do not have the same speed-metabolic cost relationship, so if you punch in cycling data, you'll probably get nonsense. However, if you have the appropriate metabolic cost data, it would be relatively easy to swap out these calculations and change the drag coefficient and frontal area. The <a href="https://github.com/johnjdavisiv/wind-calculator" target="_blank">source code</a> is MIT license, so have at it!</p>
+            <h2 id="get-updates">Support my work<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <p>If you want to find out when I have new apps and research coming out, sign up for my email list below! It's the best way to follow my work.</p>
+            <p>If you find this app useful, you can share it with your friends or post about it on social media.</p>
+            <p>This app is 100% free and open-source. If you enjoy my work and want to help support me, be sure to check out my book, <a href="https://amzn.to/46W0CxV"><strong>Modern Training and Physiology</strong></a> - it's available on Amazon as both an eBook and paperback.</p>
+            <div class="newsletter-block">
+                <script async src="https://eomail6.com/form/187bb3d4-92e9-11ed-8dcb-9536633250ee.js" data-form="187bb3d4-92e9-11ed-8dcb-9536633250ee"></script>
+            </div>
+            <h2>Contact<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <p>If you've got feedback on this web app, or if you've found a bug, please reach out! You can reach me at <a href="mailto:john@runningwritings.com"><strong>john@runningwritings.com</strong></a>.</p>
+            <p>I'm <a href="https://x.com/JDruns"><strong>also on X</strong></a>, but the best way to follow my work is my <a href="https://runningwritings.eo.page/news-and-notes-signup"><strong>email list</strong></a>!</p>
         </div>
     </main>
     <footer>

@@ -762,6 +762,110 @@ input:checked + .slider:before {
 }
 
 
+/* Table styling */
+
+/* th {
+    background-color: #F9F9F9;
+    color: #333;
+    font-weight: bold; 
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #EEE;
+  }
+  
+  th {
+    background-color: #F9F9F9;
+    color: #333;
+  } */
+
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid #DDD;
+}
+
+th {
+    background-color: #E0E0E0;
+    color: var(--soft-black);
+}
+
+tr:nth-child(even) {
+    background-color: #F2F2F2;
+}
+
+tr:nth-child(odd) {
+    background-color: #FAFAFA;
+}
+
+
+tr:hover {
+    background-color: #D1E7FD;
+}
+
+
+.explainer-text img {
+    width: 100%;
+    height: auto;
+}
+
+.newsletter-block {
+    display: flex;
+    justify-content: center;
+}
+
+/* OL looks bad! */
+.explainer-text ol {
+    margin: 20px 40px; /* Adds space around the entire ordered list */
+    padding-left: 20px; /* Adds space between the list numbers and the text */
+}
+
+.explainer-text ol li {
+    margin-bottom: 15px; /* Adds space between list items */
+    line-height: 1.6; /* Increases line spacing for better readability */
+}
+
+.explainer-text ol li p {
+    margin: 0; /* Removes default margins from paragraphs inside list items */
+    padding: 0; /* Ensures no padding inside paragraphs */
+}
+
+.explainer-text ol {
+    counter-reset: item;
+}
+
+.explainer-text ol li {
+    display: block;
+    position: relative;
+}
+
+.explainer-text ol li:before {
+    content: counter(item) ".";
+    counter-increment: item;
+    position: absolute;
+    left: -30px; /* Adjust this based on your desired distance from the text */
+    top: 0;
+    font-weight: bold;
+}
+
+
 
 /* Hover only on mice */
 @media (hover: hover) {
@@ -812,10 +916,6 @@ input:checked + .slider:before {
         background-color: #fefce8;
     }
     
-    
-    tbody tr:hover {
-        background-color: #f2f2f2;
-    }
 
     .blank-button:hover {
         background-color: white;
