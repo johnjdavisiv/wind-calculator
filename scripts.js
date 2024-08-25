@@ -1,17 +1,16 @@
-// Define aerodynamic constants
-
-// Main Workhorse function
-// Procedure should be:
-// - read the input variables from the app
-// - do caluclations
-// - update results and display in app
-
+// John J Davis, RunningWritings.com
 
 const WEIGHT_LBS_DEFAULT = 150
 const WEIGHT_KG_DEFAULT = 68
 const WEIGHT_ST_DEFAULT = 10
 const WEIGHT_ST_LB_DEFAULT = 10
 
+const GRID_MAX_M_S = 12 // m/s, whats max value of our lookup table speed? min is zero ofc 
+const GRID_STEP = 0.01 // m/s, how fine-grained is lookup table?
+
+const IS_ELITE = 1 // use elite runner metabolic cost?
+// I do not think this matters much since it is a constant offset and we just look at changes
+// Coudl add checkbox to customizer box
 
 // wind profile vals
 const ALPHA_CITY = 0.4
@@ -23,20 +22,37 @@ let alpha_exp = ALPHA_SUBURBS
 const WIND_REFERENCE_HEIGHT = 10 // meters above ground for wind forecasts and measurements
 const CHEST_HEIGHT = 1.5 // meters  (kinda arbitrary)
 
-
 const WIND_SPEED_DEFAULT = 2.2352 // 5 mph
+const RUNNER_SPEED_DEFAULT = 3.83176 // 7:00/mi
+const DEFAULT_OUTPUT_SPEED_M_S = 3.5 // fix later once you do calcs
 
+
+let output_speed_ms = DEFAULT_OUTPUT_SPEED_M_S
+
+
+// Drag equation 
+// Wind stuff setup
+const GRAVITY = 9.80665 // ISA gravity standard
+const DRAG_COEFFICIENT = 0.8 // Pretty typical values from experimental + CDF studies
+const AIR_DENSITY = 1.225 // kg/m^2, ISA air density at 15 C at sea level
+const AP_RATIO = 0.266 // percent of body surface area that is forward-facing, Ap = AP_RATIO*BSA
+// Reference: Pugh 1970, admittedly from only 9 young athletic males
+const DA_SILVA_SLOPE = 6.13 // Da Silva 202x
+
+
+// Setup for first calc (will update all in updateResults)
 let runner_weight_kg = WEIGHT_KG_DEFAULT
+let bsa = getBodySurfaceArea(runner_weight_kg)
+let runner_Ap = getAp(bsa)
+
 
 
 
 // wind fwd comp is actually the real workhorse here. Reember it's in m.s alawys. 
 
 
-
-
-let runner_speed_ms // just read it first time from pace dials
-let pace_mode = "pace"
+let input_m_s = RUNNER_SPEED_DEFAULT // just read it first time from pace dials
+let pace_or_speed = "pace"
 let units_mode = "usa"
 let effort_mode = false
 
@@ -54,34 +70,14 @@ let true_wind_fwd_comp = 1*true_wind_ms
 let true_wind_lat_comp = 0
 
 let eq_speed = 3.35 // m/s, setup intiial so its correct
-
-
 let chest_wind_ms = 1
 
 
 
 
-
-
-// Wind stuff setup
-const GRAVITY = 9.80665 // ISA gravity standard
-const DRAG_COEFFICIENT = 0.8 // Pretty typical values from experimental + CDF studies
-const AIR_DENSITY = 1.225 // kg/m^2, ISA air density at 15 C at sea level
-const AP_RATIO = 0.266 // percent of body surface area that is forward-facing, Ap = AP_RATIO*BSA
-// Reference: Pugh 1970, admittedly from only 9 young athletic males
-
-// TODO:
-// for now, just convert runner speed back to output unit and display
-// Later, will have antoehr variabl called effectivespeed that we use in same back-convert function
-// Then get the math working in a SEPAREATE index.html file to test cleanly
-
-// cf with R, try some test cases
-
-// Also need to fix output AND output units, but that will happen after calcs are done
-
-
-
 function updateResult(){
+
+  // Wrapper function to attache verything to.
   
   // CONSIDER: cool color changing gradient for headwind button
   // ie angle changse it   
@@ -89,15 +85,8 @@ function updateResult(){
   updateWeight()
   readCurrentSpeed()
   readCurrentWind()
-
-  // console.log(`input wind: ${wind_ms} m/s`)
-  // console.log(`chest height wind: ${true_wind_ms} m/s`)
-  // console.log(`chest height fwd: ${true_wind_fwd_comp} m/s`)
-  // console.log(`chest height lat: ${true_wind_lat_comp} m/s`)
-
-  // do calcs
-  updateOutput(eq_speed)
-  console.log("updated")
+  doWindCalcs()
+  updateOutput()
 
   // ok bc of scope and such we need to read the values at all times! 
 }
@@ -293,7 +282,10 @@ function updateWeight(){
   } else {
     runner_weight_kg = parseFloat(weightKgInput.value)
   }
- 
+
+  //update weight-based params
+  bsa = getBodySurfaceArea(runner_weight_kg)
+  runner_Ap = getAp(bsa)
 }
 
 
@@ -307,6 +299,7 @@ function resetWeight(){
 
 document.getElementById("advanced-reset").addEventListener('click', function(){
   resetWeight();
+  updateResult();
 })
 
 
@@ -455,14 +448,14 @@ const pace_dials = document.querySelector('#pace-dials')
 function setMode(dial_mode) {
     if (dial_mode == "pace") {
         // set global var, swap hidden states
-        pace_mode = "pace"
+        pace_or_speed = "pace"
         speed_dials.classList.add('hidden');
         pace_dials.classList.remove('hidden');
 
     }
     if (dial_mode == "speed") {
         // set global var, swap hidden states
-        pace_mode = "speed"
+        pace_or_speed = "speed"
         pace_dials.classList.add('hidden');
         speed_dials.classList.remove('hidden');
 
@@ -485,7 +478,7 @@ function setPaceText(button){
     if (button.textContent == "mph" || button.textContent == "km/h" || button.textContent == "m/s") {
         setMode("speed");
         speed_units.textContent = button.textContent;
-        // function like pass_speed_to_pace()
+        // function like pass_speed_to_pace() 
     }
 
     setOutputText(button)
@@ -498,18 +491,11 @@ var output_text = document.querySelector('#output-text')
 
 //easy once you get inoptu as m/s and output as m/s
 
-// Chang eoutptu text
+// Make output match input
 function setOutputText(button){
-    //4 things can happen here: mi, km, mph, kmh.
     let output_units = document.querySelector('#output-units')
     // [/mi] 
     output_units.textContent = button.textContent;
-    if (button.textContent == "/mi" || button.textContent == "/km") {
-        output_pace_mode = 'pace'
-    }
-    if (button.textContent == "mph" || button.textContent == "km/h" || button.textContent == "m/s") {
-        output_pace_mode = 'speed'
-    }
 }
 
 
@@ -585,9 +571,6 @@ function increment_wind(change){
         } else {
           wind_text.textContent = wind_val.toFixed(0)
         }
-        //angle_text.textContent = angle_int;
-
-        //Need to modify negateIncline to NOT flip what we just changed!
         updateResult();
     }
 }
@@ -656,7 +639,7 @@ function setWindProfile(button){
 // ----- Reading speed from digits
 function readCurrentSpeed(){
   // Pace mode
-  if (pace_mode == "pace") {
+  if (pace_or_speed == "pace") {
       // read mm:ss
       var minute_val = parseInt(d1.textContent)
       var sec_val = 10*parseInt(d2.textContent) + parseInt(d3.textContent)
@@ -673,7 +656,7 @@ function readCurrentSpeed(){
       }
 
   // Speed mode
-  } else if (pace_mode == "speed") {
+  } else if (pace_or_speed == "speed") {
       const speed_units = document.querySelector('#speed-units').textContent
       //speed changes
       var dec_speed = parseInt(s1.textContent) + parseInt(s2.textContent)/10
@@ -764,37 +747,23 @@ function decimal_pace_to_string(pace_decimal){
 }
 
 
-
-
-
-function updateOutput(eq_speed){
+function updateOutput(){
   let out_text = document.querySelector('#output-text')
   let out_units = document.querySelector('#output-units')
   let convert_text = ''
   let impossible_box = document.querySelector('#impossible-box')
 
-  if (!Number.isFinite(eq_speed)){
+  if (!Number.isFinite(output_speed_ms)){
       // If we get any funny business...hmm
       convert_text = '🤔' // hmm or scream
   } else {
       const convert_fxn = convert_dict[out_units.textContent]
-      convert_text = convert_fxn(eq_speed)
+      convert_text = convert_fxn(output_speed_ms)
   }
   out_text.textContent = convert_text
 
   //Update text in doc
 }
-
-
-
-
-
-//  Ok, doing the math...
-// First, deal with pace mode: you ACTUALLY RAN this pace, what was calm-day effort?
-//
-//
-//
-//
 
 
 
@@ -806,46 +775,15 @@ function getBodySurfaceArea(weight_kg) {
 }
 
 
-
-const DA_SILVA_SLOPE = 6.13
-
-let bsa
-let runner_Ap
-
-
-
-
-
 function getAp(bsa){
   // get projected frontal area, in m**2, from body surface area and Pugh's A_p ratio
   return AP_RATIO*bsa
 }
 
 
-// This is "the" drag equation
-function calcDragForce(relativeV, Ap) {
-  
-  // Relative v should be airflow RELATIVE TO RUNNER, not actual wind speed
-  // so it needs to be fwd vel of runner + fwd_comp of wind. and since fwd_comp is defined as headwsnid
-  // we really can do runner_speed_ms + fwd_comp
-  
-  // care with pace mode though...
-  
-  
-  // Calculate the sign of relative velocity
-  const pm_sign = Math.sign(relativeV);
-  
-  // Calculate drag force using the drag equation
-  const dragForce = pm_sign * 0.5 * AIR_DENSITY * (relativeV ** 2) * DRAG_COEFFICIENT * Ap;
-  
-  // CARE with + and - !!! 
-  
-  return dragForce;
-}
-
-
 // Black et al polynomial for metabolic cost in TRUE STILL AIR (ie on a treadmill)
 function calcTreadMetCost(speed_ms, isElite) {
+  // Ref: Black et al 2018(?)
   // isElite is a binary value: 0 (no) / 1 (yes)
   // speed is in m/s
   // The function returns the average metabolic cost of treadmill running in Watts/kg  
@@ -856,7 +794,143 @@ function calcTreadMetCost(speed_ms, isElite) {
   return metabolicCost;
 }
 
+// percetnage increase in metabolci cost, works for calm air or elatiev ariflow
+function calcAirPct(v_relative) {
+  // inc ase of calm air, v_relative is just input_m_s
 
+  // need for BW norm
+  const bodyWeightNewtons = runner_weight_kg * GRAVITY;
+  const air_pct = calcDragForce(v_relative)/bodyWeightNewtons*DA_SILVA_SLOPE
+
+  // air pct is a FLOAT percentage, i.e. 0.03 for 3% increase. 
+  // so you need to do treadmill_cost*(1 + air_pct) for correct calculations
+  
+  //this DIFFERS from R implementaiton in that I cancel the 100 implicitly
+
+  return air_pct;
+}
+
+
+
+// This is "the" drag equation
+function calcDragForce(relativeV) {  
+  // Relative v should be airflow RELATIVE TO RUNNER, not actual wind speed
+  // so it needs to be fwd vel of runner + fwd_comp of wind. and since fwd_comp is defined as headwsnid
+  // we really can do runner_speed_ms + fwd_comp
+
+  // Also, POSITIVE FORCE IS DEFINED AS OPPOSING the runner
+  
+  // Calculate the sign of relative velocity
+  const pm_sign = Math.sign(relativeV);
+  
+  // Calculate drag force using the drag equation
+  const dragForce = pm_sign * 0.5 * AIR_DENSITY * (relativeV ** 2) * DRAG_COEFFICIENT * runner_Ap;  
+  return dragForce;
+}
+
+
+function calcCalmAirTotalMetCost(speed_ms){
+  // Caculate metabolic cost of running overground in CALM AIR, in W/kg.
+  // sub-functions access runner body weight in kg (in global scope).
+  // operates on SCALARS. use map() to map to vecs
+
+  const treadmill_cost = calcTreadMetCost(speed_ms, IS_ELITE)
+  const air_pct = calcAirPct(speed_ms)
+  const calm_air_total_met_cost = treadmill_cost*(1+air_pct)
+  return calm_air_total_met_cost
+}
+
+function doWindCalcs(){
+  // Drag equation updaets
+
+  if (input_m_s == 0) {
+    output_speed_ms = 0
+  } else if (effort_mode){    
+    // input_m_s is our calm-air effort
+
+    // (1) Calcualte calm air effort (a scalar!)
+
+    const calm_air_total_met_cost = calcCalmAirTotalMetCost(input_m_s)
+    // (2) generate lookup table for met cost at different actual speeds, including whatever wind we have
+    const v_grid = makeGrid(0,GRID_MAX_M_S,GRID_STEP)
+    const v_relative_grid = v_grid.map(v => v + true_wind_fwd_comp)
+    const air_pct_grid = v_relative_grid.map(v => calcAirPct(v))
+    const treadmill_cost_grid = v_grid.map(v => calcTreadMetCost(v, IS_ELITE))
+
+    // elementiwse, do treadmill_cost*(1+air_pct)
+    const total_cost_grid = treadmill_cost_grid.map((treadmillCost, index) => {
+      const airPct = air_pct_grid[index];
+      return treadmillCost * (1 + airPct);
+    });
+    // Now we have our grid of total metabolic cost at different overground speeds!
+
+    // (3) Find the speed in total_cost_grid that produces a metabolic cost closest to calm_air_total_met_cost
+    const eq_speed_in_wind = lookupSpeedFromCost(calm_air_total_met_cost, v_grid, total_cost_grid)
+    output_speed_ms = eq_speed_in_wind
+    
+  
+  } else {
+    // (else we are in pace mode, not effort mode)
+
+    // 1) make calm air metabolic cost lookup table, using grid of v avalues
+    //      ie calc drag forces when v_relative = - v_runner, so calm air outdoors
+
+    const v_grid = makeGrid(0,GRID_MAX_M_S,GRID_STEP)
+    const C_calm_grid = v_grid.map(v => calcCalmAirTotalMetCost(v));
+    // Lookup table of metabolic costs (W/kg) of running at a given speed overground in calm air
+
+
+    // Find metabolic cost of running (treadmill and also relative-wind cost) at true_wind_fwd_comp
+    // console.log(`True forward component of wind: ${true_wind_fwd_comp.toFixed(2)} m/s`)
+    // console.log(`True runner velocity: ${input_m_s.toFixed(2)} m/s`)
+
+    // this part will not be same for effort mode
+    const cost_actual_treadmill = calcTreadMetCost(input_m_s, IS_ELITE)
+    const V_relative = input_m_s + true_wind_fwd_comp
+    // console.log(`V_relative is: ${V_relative.toFixed(2)} m/s`)
+    // console.log(`Treadmill cost at ${input_m_s.toFixed(2)} m/s is ${cost_actual_treadmill.toFixed(2)} W/kg`)
+
+    const air_pct_actual = calcAirPct(V_relative)
+
+
+    const total_cost_w_kg = cost_actual_treadmill*(1+air_pct_actual)
+    // console.log(`Total metabolic cost at ${input_m_s.toFixed(2)} m/s in ${true_wind_fwd_comp.toFixed(2)} m/s true fwd wind is ${total_cost_w_kg.toFixed(2)} W/kg`)
+
+    // 3) Look up closest metabolic cost in calm air grid for total_cost_w_kg
+    const calm_air_equiv_speed = lookupSpeedFromCost(total_cost_w_kg, v_grid, C_calm_grid)
+    // console.log(`Calm air equivalent of ${input_m_s.toFixed(2)} m/s in ${true_wind_fwd_comp.toFixed(2)} m/s true fwd is ${calm_air_equiv_speed.toFixed(2)} m/s`)
+    output_speed_ms = calm_air_equiv_speed
+  }
+}
+
+
+
+// Lookup function
+// Given a grid of speeds speed_grid, and a metaboic cost in W/kg at each speed cost_grid,
+// return the speed whose metabolic cost most closely matches cost_query
+function lookupSpeedFromCost(cost_query, speed_grid, cost_grid) {
+  let f_x;
+
+  // Check if x is outside the range of speed_m_s
+  if (cost_query < cost_grid[0] || cost_query > cost_grid[cost_grid.length - 1]) {
+      //throw new Error('x is outside of the range of the speed_m_s column');
+      console.log('Cost query is outside range of the grid!')
+      f_x = NaN;
+  } else {
+      // Find the indices that x falls between
+      let i = 0;
+      for (; i < cost_grid.length - 1; i++) {
+          if (cost_query >= cost_grid[i] && cost_query <= cost_grid[i + 1]) {
+              break;
+          }
+      }
+      // Linear interpolation
+      // y = y0 + (y1 - y0) * ((x - x0) / (x1 - x0))
+      f_x = speed_grid[i] + (speed_grid[i + 1] - speed_grid[i]) * ((cost_query - cost_grid[i]) / (cost_grid[i + 1] - cost_grid[i]));
+      // f(x) approximation
+  }
+  return f_x;
+}
 
 
 // Function to calculate the change in metabolic power AS A PERCENTAGE of original met. power in W/kg
@@ -878,8 +952,6 @@ function calcDeltaMetPowerPct(drag_force) {
 }
 
 
-
-
 // Wind profiel adjustments
 
 // Function to calculate wind velocity at a specific height using the power law
@@ -893,24 +965,12 @@ function windProfilePowerLaw(vRef, alpha) {
   return vZ;
 }
 
-
-
-function doWindCalcs(){
-  bsa = getBodySurfaceArea(runner_weight_kg)
-  runner_Ap = getAp(bsa)
+// Behaves same as seq(start_val, end_val, by = grid_step) in R
+function makeGrid(start_val, end_val, grid_step) {
+  const length = Math.floor((end_val - start_val) / grid_step) + 1; // Adjusted to use Math.floor
+  const grid = Array.from({length: length}, (_, i) => parseFloat((start_val + i * grid_step).toFixed(10)));
+  return grid;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

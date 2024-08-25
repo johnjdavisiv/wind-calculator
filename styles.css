@@ -910,15 +910,8 @@ input:checked + .slider:before {
     .advanced-content {
         font-size:1em;
     }
-/* 
-    .height-weight-input, .height-weight-unit {
-        font-size: 0.5em;
-        color:red;
-    } */
     
 }
-
-
 
 
 /* Affecting things that are active */
