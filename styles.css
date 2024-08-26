@@ -411,12 +411,12 @@ main {
 }
 
 
-.adv-title{
+.advanced-title{
     font-size: 1.5em;
     padding: 0 0 0.5em 0;
 }
 
-.adv-right{
+.advanced-right{
     font-size:1.25em;
 }
 
@@ -426,7 +426,7 @@ main {
     max-width: var(--width-limit);
 }
 
-.adv-top-row {
+.advanced-top-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1002,7 +1002,7 @@ tr:hover {
         font-size: 0.8em;
     }
 
-    .adv-title{
+    .advanced-title{
         font-size: 1em;
         padding: 0 0 0.25em 0;
     }
