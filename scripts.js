@@ -136,7 +136,7 @@ let startAngle = 0;
 let startPointerAngle = 0;
 
 
-function getWindComps(angleDegrees) {
+function getAngleComps(angleDegrees) {
   // Convert the angle from degrees to radians
   const angleRadians = angleDegrees * (Math.PI / 180);
   
@@ -596,6 +596,12 @@ function setWindType(){
 
   //In case you want to use fancy termsl like quartering wind later
 
+  // Angle definitions: 
+  // 0 deg: north
+  // 45 deg: northeast
+  // ... 
+  // 315: Northwest
+
   //Can also do color chang ehere?
 
   if (angle >= 337.5 || angle < 22.5) {
@@ -686,12 +692,14 @@ function readCurrentWind(){
   }
 
   true_wind_ms = windProfilePowerLaw(wind_ms, alpha_exp)
+
+  // SCRATCH THIS
   
-  const wind_components = getWindComps(angle);
+  const angle_components = getAngleComps(angle);
   
   // Don't forget vector magntidue
-  true_wind_fwd_comp = wind_components['fwd_comp']*true_wind_ms
-  true_wind_lat_comp = wind_components['lat_comp']*true_wind_ms
+  true_wind_fwd_comp = angle_components['fwd_comp']*true_wind_ms
+  true_wind_lat_comp = angle_components['lat_comp']*true_wind_ms
 }
 
 
@@ -747,7 +755,6 @@ function updateOutput(){
   let out_text = document.querySelector('#output-text')
   let out_units = document.querySelector('#output-units')
   let convert_text = ''
-  let impossible_box = document.querySelector('#impossible-box')
 
   if (!Number.isFinite(output_speed_ms)){
       // If we get any funny business...hmm
@@ -791,12 +798,27 @@ function calcTreadMetCost(speed_ms, isElite) {
 }
 
 // percetnage increase in metabolci cost, works for calm air or elatiev ariflow
-function calcAirPct(v_relative) {
+function calcAirPct(v_relative, relative_angle_deg) {
+  // RElative angle is the angle, in RADIANS, of the drag force in relative airflow. NOT same as "angle" which is input wind angle
+
   // inc ase of calm air, v_relative is just input_m_s
+  const relative_angle_rad = relative_angle_deg * (Math.PI / 180);
+
+
+  // get drag force for TOTAL airflow
+  const dragForceTotal = calcDragForce(v_relative)
+  // now get forward component of drag force
+  const dragForceFwd = dragForceTotal*Math.sin(relative_angle_rad)
+
+  console.log(`Drag force total: ${dragForceTotal.toFixed(1)}`)
+  console.log(`Drag force fwd: ${dragForceFwd.toFixed(1)}`)
+  console.log(`Input relative angle: ${relative_angle_deg.toFixed(1)}`)
+
 
   // need for BW norm
   const bodyWeightNewtons = runner_weight_kg * GRAVITY;
-  const air_pct = calcDragForce(v_relative)/bodyWeightNewtons*DA_SILVA_SLOPE
+  const air_pct = dragForceFwd/bodyWeightNewtons*DA_SILVA_SLOPE
+  // Ok note how we neglect the lateral component here.
 
   // air pct is a FLOAT percentage, i.e. 0.03 for 3% increase. 
   // so you need to do treadmill_cost*(1 + air_pct) for correct calculations
@@ -810,9 +832,6 @@ function calcAirPct(v_relative) {
 
 // This is "the" drag equation
 function calcDragForce(relativeV) {  
-  // Relative v should be airflow RELATIVE TO RUNNER, not actual wind speed
-  // so it needs to be fwd vel of runner + fwd_comp of wind. and since fwd_comp is defined as headwsnid
-  // we really can do runner_speed_ms + fwd_comp
 
   // Also, POSITIVE FORCE IS DEFINED AS OPPOSING the runner
   
@@ -831,7 +850,7 @@ function calcCalmAirTotalMetCost(speed_ms){
   // operates on SCALARS. use map() to map to vecs
 
   const treadmill_cost = calcTreadMetCost(speed_ms, IS_ELITE)
-  const air_pct = calcAirPct(speed_ms)
+  const air_pct = calcAirPct(speed_ms, 90) // 90 for straight forward airflow
   const calm_air_total_met_cost = treadmill_cost*(1+air_pct)
   return calm_air_total_met_cost
 }
@@ -849,11 +868,34 @@ function doWindCalcs(){
     const calm_air_total_met_cost = calcCalmAirTotalMetCost(input_m_s)
     // (2) generate lookup table for met cost at different actual speeds, including whatever wind we have
     const v_grid = makeGrid(0,GRID_MAX_M_S,GRID_STEP)
-    const v_relative_grid = v_grid.map(v => v + true_wind_fwd_comp)
-    const air_pct_grid = v_relative_grid.map(v => calcAirPct(v))
+
+    ///  PROBELM - this is not correct for angles
+
+    // v_relative is actually magniutde of <true_wind_lat_comp, v + true_wind_fwd_comp>  then youj have to take cos(angle)*Fdrag(vrel) to get force
+
+    // I think we can still call getDragForce and just intercept the call to calcAirPct? ohoh shoot. Maybem odify acalcAirPct to do angle? 
+
+
+    // NEW CORRECT CALCS...
+
+    //At differenta ctual speeds, there are different relative airflows
+    const v_relative_grid = v_grid.map(v => getVectorMag(true_wind_lat_comp, v + true_wind_fwd_comp))
+    // Now we need a grid of the true angles!
+    const relative_angle_grid_deg = v_grid.map(v => getRelativeWindAngle(true_wind_lat_comp, v + true_wind_fwd_comp))
+    const air_pct_grid = v_relative_grid.map((v, index) => calcAirPct(v, relative_angle_grid_deg[index]))
+    // want to do calcAirPct()
+
+
+    //const air_pct_actual = calcAirPct(V_relative, relative_angle_deg)
+
+    // for each v, we want to do...
+    // get vector mag of (true_lat, true_fwd + v
+
+    // relative_angle = getRelativeWindAngle(true_wind_lat_comp, true_wind_fwd_comp + input_m_s)
+    
     const treadmill_cost_grid = v_grid.map(v => calcTreadMetCost(v, IS_ELITE))
 
-    // elementiwse, do treadmill_cost*(1+air_pct)
+    // elementiwse, do treadmill_cost*(1+air_pct) to get the metabolic cost in calm air at each point on the grid
     const total_cost_grid = treadmill_cost_grid.map((treadmillCost, index) => {
       const airPct = air_pct_grid[index];
       return treadmillCost * (1 + airPct);
@@ -873,6 +915,9 @@ function doWindCalcs(){
 
     const v_grid = makeGrid(0,GRID_MAX_M_S,GRID_STEP)
     const C_calm_grid = v_grid.map(v => calcCalmAirTotalMetCost(v));
+
+    
+
     // Lookup table of metabolic costs (W/kg) of running at a given speed overground in calm air
 
 
@@ -882,11 +927,26 @@ function doWindCalcs(){
 
     // this part will not be same for effort mode
     const cost_actual_treadmill = calcTreadMetCost(input_m_s, IS_ELITE)
-    const V_relative = input_m_s + true_wind_fwd_comp
+
+    // Correct! 
+    const V_relative = getVectorMag(true_wind_lat_comp, true_wind_fwd_comp + input_m_s)
+    // console.log(`Correct V relative of airflow is ${V_relative.toFixed(2)}`)
+    // console.log(`Input wind speed is ${true_wind_ms.toFixed(2)}`)
+
+    const relative_angle_deg = getRelativeWindAngle(true_wind_lat_comp, true_wind_fwd_comp + input_m_s)
+    // console.log(`Input wind angle is ${angle.toFixed(1)}`)
+    // console.log(`Relative V angle is ${relative_angle_deg.toFixed(1)}`)
+
+    // Now... use Fd sin (relative_angle) to get Fd fwd comp
+
+
+    //const V_relative = input_m_s + true_wind_fwd_comp // <-- NOT CORRECT
     // console.log(`V_relative is: ${V_relative.toFixed(2)} m/s`)
     // console.log(`Treadmill cost at ${input_m_s.toFixed(2)} m/s is ${cost_actual_treadmill.toFixed(2)} W/kg`)
 
-    const air_pct_actual = calcAirPct(V_relative)
+    // ALSO PROBLEM - need to fix so we use correct v_relative
+
+    const air_pct_actual = calcAirPct(V_relative, relative_angle_deg)
 
 
     const total_cost_w_kg = cost_actual_treadmill*(1+air_pct_actual)
@@ -899,6 +959,21 @@ function doWindCalcs(){
   }
 }
 
+
+function getVectorMag(x_comp, y_comp){
+  const v_mag = Math.sqrt(x_comp**2 + y_comp**2)
+  // console.log(v_mag.toFixed(2))
+  return v_mag
+}
+
+function getRelativeWindAngle(x_comp, y_comp){
+  const rel_angle_rad = Math.atan(y_comp / Math.abs(x_comp))
+  // Note the absolute value here, VERY important to preserve sign of y comp only
+
+  // return in DEGREES
+  return rel_angle_rad*(180 / Math.PI)
+
+}
 
 
 // Lookup function
