@@ -35,6 +35,14 @@
             </nav>
         </div>
     </header>
+    <div class="mee-banner hello-bar--aqua-drift hidden">
+        <div class="banner-left"><button id="mee-banner-close">x</button></div>
+        <div class="banner-middle">
+            <span class="banner-text-full">Tackle windy races with my new book: <a href="https://marathonexcellence.com/?utm_source=rw_apps&utm_medium=hellobar&utm_campaign=wind_hello_bar" class="hello-link plausible-event-name=Banner+MEE+Click">Marathon Excellence</a></span>
+            <span class="banner-text-short">Tackle windy races with my new book: <a href="https://marathonexcellence.com/?utm_source=rw_apps&utm_medium=hellobar&utm_campaign=wind_hello_bar" class="hello-link plausible-event-name=Banner+MEE+Click">Marathon Excellence</a></span>
+        </div>
+        <div class="banner-right"><a href="https://marathonexcellence.com/?utm_source=rw_apps&utm_medium=hellobar&utm_campaign=wind_hello_bar" class="cta-button plausible-event-name=Banner+MEE+Click">Learn More</a></div>
+    </div>
     <main>
         <h1>Headwind and tailwind calculator</h1>
         <div class="app-box">
@@ -106,7 +114,7 @@
                     <span class="wind-label" id="wind-units">mph</span>
                     <span class="wind-label">&nbsp;</span>
                     <span class="wind-label" id="wind-type">headwind</span>
-
+                    
                 </div>
                 <div class="arrow-box">
                     <button class="material-icons pct-button" id="wind-p1" title="+1">keyboard_arrow_right</button>
@@ -119,7 +127,7 @@
                 <button class="unit-toggle wind-toggle">knots</button>
                 <button class="unit-toggle wind-toggle">m/s</button>
             </div>
-
+            
             <div class="new-wind-container">
                 <div class="box left-settings">
                     <div class="inner-left-content">
@@ -194,8 +202,8 @@
                     </div>
                 </div>
                 <div class="box right-settings"></div>
-              </div>
-
+            </div>
+            
             <div class="spacer effort-container">
                 <span id="result-pre">is the same effort as</span>
             </div>
@@ -249,7 +257,7 @@
         </div>
         <div class="explainer-text">
             <h2 id="how-to-use">How to use<a class="material-icons up" href="#top">arrow_upward</a></h2>
-
+            
             <p>This app calculates the effects of headwinds and tailwinds on your pacing when you run. It uses a combination of aerodynamics calculations and empirical data to calculate a <strong>“wind-adjusted pace”</strong> or effort level when running into or with a wind of a given strength.</p>
             <p>All you need to input is the pace (or effort level) you are running at, and the direction of the wind relative to the runner. <strong>You can click on the compass directions</strong> to “snap” the wind to a specific orientation, or click and drag the dial to get a feel for how crosswinds of varying degrees.</p>
             <p>The calculator accepts running pace in minutes per mile (/mi) or minutes per kilometer (/km), as well as running speed in miles per hour (mph), kilometers per hour (km/h), or meters per second (m/s). Wind speed can be entered in mph, km/h, knots, or meters per second (m/s).</p>
@@ -295,35 +303,35 @@
             <p>The table below shows the recommended settings for various conditions you might encounter in your training.</p>
             <table>
                 <thead>
-                  <tr>
-                    <th>Setting</th>
-                    <th>&alpha;</th>
-                    <th>Recommended Wind Profile Mode</th>
-                  </tr>
+                    <tr>
+                        <th>Setting</th>
+                        <th>&alpha;</th>
+                        <th>Recommended Wind Profile Mode</th>
+                    </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Urban</td>
-                    <td>0.40</td>
-                    <td>Urban areas with tightly-packed tall buildings, dense forests</td>
-                  </tr>
-                  <tr>
-                    <td>Suburban</td>
-                    <td>0.30</td>
-                    <td>Suburbs, town center, park with trees and buildings</td>
-                  </tr>
-                  <tr>
-                    <td>Rural</td>
-                    <td>0.16</td>
-                    <td>Rural road, open prairie, grasslands</td>
-                  </tr>
-                  <tr>
-                    <td>None</td>
-                    <td>0.00</td>
-                    <td>Exposed mountain ridge, true ground-level wind measurements (e.g. wind gauge for track events)</td>
-                  </tr>
+                    <tr>
+                        <td>Urban</td>
+                        <td>0.40</td>
+                        <td>Urban areas with tightly-packed tall buildings, dense forests</td>
+                    </tr>
+                    <tr>
+                        <td>Suburban</td>
+                        <td>0.30</td>
+                        <td>Suburbs, town center, park with trees and buildings</td>
+                    </tr>
+                    <tr>
+                        <td>Rural</td>
+                        <td>0.16</td>
+                        <td>Rural road, open prairie, grasslands</td>
+                    </tr>
+                    <tr>
+                        <td>None</td>
+                        <td>0.00</td>
+                        <td>Exposed mountain ridge, true ground-level wind measurements (e.g. wind gauge for track events)</td>
+                    </tr>
                 </tbody>
-              </table>
+            </table>
             <p>The default is “Suburbs” simply because that's the most common training location for the runners that I coach.</p>
             <p>Notably, if you have a true ground-level wind speed—for example, from an anemometer or a wind gauge kit used to measure wind speeds in sprint events—you should set the wind profile to “None.” Setting the wind profile to None applies <em>no </em>correction, i.e. it assumes that your input wind speed is exactly the air speed that the runner encounters.</p>
             <p>Because “tube-style” wind gauges measure only the head-on component of wind (in the direction they are pointing), you should also set the wind direction in this app to be a direct headwind, i.e. “N” on the compass rose, if you are using a track and field wind gauge as your source of wind speed. The same is not true for normal anemometers used for weather measurements.</p>

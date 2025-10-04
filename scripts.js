@@ -1045,5 +1045,49 @@ function makeGrid(start_val, end_val, grid_step) {
 
 
 
+// COOKIE - dont' be annoying
+
+// Configuration
+const COOKIE_DURATION_DAYS = 30;
+
+// Cookie helper functions
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        let c = cookies[i].trim();
+        if (c.indexOf(nameEQ) === 0) {
+            return c.substring(nameEQ.length, c.length);
+        }
+    }
+    return null;
+}
+
+// Banner functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const banner = document.querySelector('.mee-banner');
+    const closeButton = document.getElementById('mee-banner-close');
+    
+    // Check if user has previously closed the banner
+    if (getCookie('meeBannerClosed') !== 'true') {
+        banner.classList.remove('hidden');
+    }
+    
+    // Handle close button click
+    closeButton.addEventListener('click', function() {
+        banner.classList.add('hidden');
+        setCookie('meeBannerClosed', 'true', COOKIE_DURATION_DAYS);
+    });
+});
+
+
+
 updateDial();
 updateResult();
