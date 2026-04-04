@@ -810,9 +810,9 @@ function calcAirPct(v_relative, relative_angle_deg) {
   // now get forward component of drag force
   const dragForceFwd = dragForceTotal*Math.sin(relative_angle_rad)
 
-  console.log(`Drag force total: ${dragForceTotal.toFixed(1)}`)
-  console.log(`Drag force fwd: ${dragForceFwd.toFixed(1)}`)
-  console.log(`Input relative angle: ${relative_angle_deg.toFixed(1)}`)
+  // console.log(`Drag force total: ${dragForceTotal.toFixed(1)}`)
+  // console.log(`Drag force fwd: ${dragForceFwd.toFixed(1)}`)
+  // console.log(`Input relative angle: ${relative_angle_deg.toFixed(1)}`)
 
 
   // need for BW norm

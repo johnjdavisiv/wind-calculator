@@ -7,11 +7,11 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://apps.runningwritings.com/wind-calculator/">
     <meta property="og:image" content="https://apps.runningwritings.com/wind-calculator/images/wind-app-social-card-1200px.png">
-    <meta property="og:description" content="Calculate the effects of headwinds and tailwinds on your pacing for workout and races.">
+    <meta property="og:description" content="Calculate the effects of headwinds and tailwinds on your pacing for workouts and races.">
     <meta property="og:site_name" content="Running Writings">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Headwind and tailwind calculator for runners">
-    <meta name="twitter:description" content="Calculate the effects of headwinds and tailwinds on your pacing for workout and races.">
+    <meta name="twitter:description" content="Calculate the effects of headwinds and tailwinds on your pacing for workouts and races.">
     <meta name="twitter:image" content="https://apps.runningwritings.com/wind-calculator/images/wind-app-social-card-1200px.png">
     <meta name="author" content="John J Davis, PhD">
     <title>Headwind and tailwind calculator for runners - from Running Writings</title>
@@ -19,8 +19,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="styles.css?v=1.0.2">
-    <script src="scripts.js?v=1.0.1" defer></script>
+    <link rel="stylesheet" type="text/css" href="styles.css?v=1.0.3">
+    <script src="scripts.js?v=1.0.2" defer></script>
     <script defer data-domain="apps.runningwritings.com" src="https://plausible.io/js/script.js"></script>
 </head>
 <body>
@@ -259,13 +259,13 @@
             <h2 id="how-to-use">How to use<a class="material-icons up" href="#top">arrow_upward</a></h2>
             
             <p>This app calculates the effects of headwinds and tailwinds on your pacing when you run. It uses a combination of aerodynamics calculations and empirical data to calculate a <strong>“wind-adjusted pace”</strong> or effort level when running into or with a wind of a given strength.</p>
-            <p>All you need to input is the pace (or effort level) you are running at, and the direction of the wind relative to the runner. <strong>You can click on the compass directions</strong> to “snap” the wind to a specific orientation, or click and drag the dial to get a feel for how crosswinds of varying degrees.</p>
+            <p>All you need to input is the pace (or effort level) you are running at, and the direction of the wind relative to the runner. <strong>You can click on the compass directions</strong> to “snap” the wind to a specific orientation, or click and drag the dial to get a feel for how crosswinds of varying degrees affect your pacing.</p>
             <p>The calculator accepts running pace in minutes per mile (/mi) or minutes per kilometer (/km), as well as running speed in miles per hour (mph), kilometers per hour (km/h), or meters per second (m/s). Wind speed can be entered in mph, km/h, knots, or meters per second (m/s).</p>
             <p>When entering wind speed, you should enter it as the <strong>wind speed measured in a stationary position </strong>(i.e. the wind speed as you'd see in a weather app on your phone, or that you'd measure with an anemometer).</p>
             <p>In other words, this calculator already accounts for the fact that running at 10 mph into a 5 mph headwind creates an effective 15 mph airspeed—you do not (and should not) need to do this math yourself. Likewise, the calculator already accounts for the metabolic cost of overcoming air resistance on a calm day.</p>
             <p>Also note that the compass directions (N, NE, E, …) are<em> illustrative only</em>. Obviously, if you are running south into a wind <em>from </em>the south, you are encountering a direct headwind, and you would have the calculator pointed to “north”—hence the top-down view of the runner and the text annotation.</p>
             <p>For more advanced use-cases, you can customize the weight of the runner and the wind profile used to calculate the true chest-level wind that you experience in different settings. See below for details on those fronts.</p>
-            <h3>How the wind adjusted pace calculations work<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <h3>How the wind-adjusted pace calculations work<a class="material-icons up" href="#top">arrow_upward</a></h3>
             <p>Conceptually, calculating the effects of headwinds and tailwinds on pacing is relatively simple. The calculator uses the following procedure:</p>
             <ol>
                 <li>
@@ -289,7 +289,7 @@
             <p>The predicted metabolic costs line up very well for headwinds as strong as 15 mph, and the error is not too bad even into a 20 mph headwind. The reason the calculator predicts too high of a metabolic cost in extreme headwinds is likely because runners “lean into” extreme headwinds to generate lift, which reduces the metabolic cost of running slightly.</p>
             <p>Do see the <a href="#limitations">limitations section</a> below for some caveats, though.</p>
             <h3>Calculating the effects of crosswinds<a class="material-icons up" href="#top">arrow_upward</a></h3>
-            <p>This wind calculator uses principles of vector addition to deal with crosswinds: first, the relative velocity of the air is calculated, then used to calculate the total drag force. Then, the forward component of the drag force vector is used to calculcate the effective opposing (or assisting) force experienced by the runner.</p>
+            <p>This wind calculator uses principles of vector addition to deal with crosswinds: first, the relative velocity of the air is calculated, then used to calculate the total drag force. Then, the forward component of the drag force vector is used to calculate the effective opposing (or assisting) force experienced by the runner.</p>
             <p>For now, the lateral component of drag forces from crosswinds is ignored. The potential effects of ignoring lateral effects are discussed in the limitations section. The main reason they are ignored is that there is no research on the metabolic cost of resisting a lateral force during running. I suspect these costs are not very big, though, since runners deal with lateral forces just fine when running on a track without any major effects on their pacing.</p>
             <p>Do note that, because of how the drag equation works, a pure lateral crosswind <em>does</em> still slow you down!</p>
             <h2 id="height-weight-info">Do height and weight affect pacing in the wind?<a class="material-icons up" href="#top">arrow_upward</a></h2>
@@ -318,12 +318,12 @@
                     <tr>
                         <td>Suburban</td>
                         <td>0.30</td>
-                        <td>Suburbs, town center, park with trees and buildings</td>
+                        <td>Suburbs, town centers, parks with trees and buildings</td>
                     </tr>
                     <tr>
                         <td>Rural</td>
                         <td>0.16</td>
-                        <td>Rural road, open prairie, grasslands</td>
+                        <td>Rural roads, open prairies, grasslands</td>
                     </tr>
                     <tr>
                         <td>None</td>
