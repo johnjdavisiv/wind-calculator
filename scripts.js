@@ -35,7 +35,7 @@ let output_speed_ms = DEFAULT_OUTPUT_SPEED_M_S
 // Wind stuff setup
 const GRAVITY = 9.80665 // ISA gravity standard
 const DRAG_COEFFICIENT = 0.8 // Pretty typical values from experimental + CDF studies
-const AIR_DENSITY = 1.225 // kg/m^2, ISA air density at 15 C at sea level
+const AIR_DENSITY = 1.225 // kg/m^3, ISA air density at 15 C at sea level
 const AP_RATIO = 0.266 // percent of body surface area that is forward-facing, Ap = AP_RATIO*BSA
 // Reference: Pugh 1970, admittedly from only 9 young athletic males
 const DA_SILVA_SLOPE = 6.13 // Da Silva 202x
@@ -68,9 +68,6 @@ let true_wind_ms = windProfilePowerLaw(wind_ms, alpha_exp)
 let true_wind_fwd_comp = 1*true_wind_ms
 let true_wind_lat_comp = 0
 
-let eq_speed = 3.35 // m/s, setup intiial so its correct
-let chest_wind_ms = 1
-
 
 
 
@@ -81,6 +78,7 @@ function updateResult(){
   // ie angle changse it   
   // notice how we need to read weight here, not externally in global space
   updateWeight()
+  updateRunnerLabel()
   readCurrentSpeed()
   readCurrentWind()
   doWindCalcs()
@@ -221,21 +219,43 @@ compassButtons.forEach((button, index) => {
 // Setup the advanced dropdown box
 document.getElementById("advanced-expand").addEventListener("click", function() {
   var content = document.getElementById("advanced-content");
-  var labelText = document.getElementById("typical-or-custom");
   var resetButton = document.getElementById("advanced-reset");
 
   content.classList.toggle("expanded");
-  
+
   // Toggle the icon or text if needed
   if (content.classList.contains("expanded")) {
       this.innerText = "expand_less"; // Use a different icon for collapse
-      labelText.innerText = "Custom runner"; 
       resetButton.classList.remove("invis");
   } else {
       this.innerText = "settings";
-      labelText.innerText = "Custom runner";
   }
+
+  updateRunnerLabel();
 });
+
+
+function isDefaultWeight(){
+  if (units_mode == "usa"){
+    return parseFloat(weightLbsInput.value) === WEIGHT_LBS_DEFAULT
+  } else if (units_mode == "uk") {
+    return parseFloat(weightStInput.value) === WEIGHT_ST_DEFAULT
+        && parseFloat(weightStLbInput.value) === WEIGHT_ST_LB_DEFAULT
+  }
+  return parseFloat(weightKgInput.value) === WEIGHT_KG_DEFAULT
+}
+
+
+function updateRunnerLabel(){
+  var content = document.getElementById("advanced-content");
+  var labelText = document.getElementById("typical-or-custom");
+
+  if (content.classList.contains("expanded") || !isDefaultWeight()) {
+    labelText.innerText = "Custom runner"
+  } else {
+    labelText.innerText = "For a typical runner"
+  }
+}
 
 
 // Toggle metric vs imperial
@@ -342,7 +362,7 @@ d3_up.addEventListener('click', () => {
 });
 
 d3_down.addEventListener('click', () => {
-    increment_sec_digit(d3,10,-1,5); //floor of 5
+    increment_sec_digit(d3,10,-1);
     updateResult();
 });
 
@@ -390,7 +410,6 @@ function increment_sec_digit(digit_object, digit_limit, change){
     if (change === -1) {
         digit_val = (digit_val - 1 + digit_limit) % digit_limit;
     }
-    // DEAL WITH 0:00 SOMEHOW...
     digit_object.textContent = digit_val;
 }
 
@@ -678,7 +697,7 @@ function readCurrentSpeed(){
 
 function readCurrentWind(){
   var wind_units = document.querySelector('#wind-units').textContent
-  var wind_input = document.querySelector('#wind-digit').textContent
+  var wind_input = parseFloat(document.querySelector('#wind-digit').textContent)
 
   if (wind_units == "mph"){
 
@@ -686,7 +705,7 @@ function readCurrentWind(){
   } else if (wind_units == "km/h") {
     wind_ms = wind_input/3.6
   } else if (wind_units == "knots") {
-    wind_ms = wind_input*0.51444
+    wind_ms = wind_input*1852/3600 // 1 knot = 1 nautical mile per hour
   } else if (wind_units == "m/s") {
     wind_ms = wind_input
   }
@@ -746,7 +765,7 @@ function decimal_pace_to_string(pace_decimal){
         pace_sec = Math.round(pace_sec);
     }
     //To formatted string
-    res = `${pace_min}:${pace_sec.toString().padStart(2,'0')}` 
+    const res = `${pace_min}:${pace_sec.toString().padStart(2,'0')}`
     return res
 }
 
@@ -756,7 +775,7 @@ function updateOutput(){
   let out_units = document.querySelector('#output-units')
   let convert_text = ''
 
-  if (!Number.isFinite(output_speed_ms)){
+  if (!Number.isFinite(output_speed_ms) || output_speed_ms <= 0){
       // If we get any funny business...hmm
       convert_text = '🤔' // hmm or scream
   } else {
@@ -858,9 +877,10 @@ function calcCalmAirTotalMetCost(speed_ms){
 function doWindCalcs(){
   // Drag equation updaets
 
-  if (input_m_s == 0) {
-    output_speed_ms = 0
-  } else if (effort_mode){    
+  if (!Number.isFinite(input_m_s) || input_m_s <= 0) {
+    // 0:00 pace reads as an infinite speed, 0.0 mph as zero: neither is a runnable input
+    output_speed_ms = NaN
+  } else if (effort_mode){
     // input_m_s is our calm-air effort
 
     // (1) Calcualte calm air effort (a scalar!)
@@ -1001,25 +1021,6 @@ function lookupSpeedFromCost(cost_query, speed_grid, cost_grid) {
       // f(x) approximation
   }
   return f_x;
-}
-
-
-// Function to calculate the change in metabolic power AS A PERCENTAGE of original met. power in W/kg
-// using as percenta; total_met_power = treadmill_met_power*(1+delta_met_power_pct/100),
-
-// delta comes from thsi eqn vvv
-
-function calcDeltaMetPowerPct(drag_force) {
-  // Body weight in Newtons
-  const bodyWeightNewtons = runner_weight_kg * GRAVITY;
-  
-  // Calculate horizontal impeding force as a percentage of body weight
-  const impedingForcePctBW = (drag_force / bodyWeightNewtons) * 100;
-  
-  // Calculate the change in metabolic power as a percentage
-  const deltaMetPowerPct = DA_SILVA_SLOPE * impedingForcePctBW;
-  
-  return deltaMetPowerPct;
 }
 
 
