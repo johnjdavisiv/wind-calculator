@@ -16,9 +16,8 @@
     <meta name="author" content="John J Davis, PhD">
     <title>Headwind and tailwind calculator for runners - from Running Writings</title>
     <link rel="icon" href="https://apps.runningwritings.com/wind-calculator/images/RW-favicon.png" type="image/png">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preload" href="fonts/roboto-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/pt-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" type="text/css" href="styles.css?v=1.1.0">
     <link rel="stylesheet" href="app-gallery.css?v=22e5443b">
     <script src="rw-storage.js?v=1.0.0" defer></script>
@@ -54,38 +53,38 @@
                 <div class="left-dummy"></div>
                 <div class="clock" id="pace-dials">
                     <div class="digitbox">
-                        <button class="material-icons svg-arrow" id="d1-up">expand_less</button>
+                        <button class="material-icons svg-arrow" id="d1-up"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="m296-345-56-56 240-240 240 240-56 56-184-184-184 184Z"/></svg></button>
                         <div class="digit" id="d1">7</div>
-                        <button class="material-icons svg-arrow" id="d1-down">expand_more</button>
+                        <button class="material-icons svg-arrow" id="d1-down"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></button>
                     </div>
                     <div class="digitbox colon">
                         <span class="digit">:</span>
                     </div>
                     <div class="digitbox">
-                        <button class="material-icons svg-arrow" id="d2-up">expand_less</button>
+                        <button class="material-icons svg-arrow" id="d2-up"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="m296-345-56-56 240-240 240 240-56 56-184-184-184 184Z"/></svg></button>
                         <div class="digit" id="d2">0</div>
-                        <button class="material-icons svg-arrow" id="d2-down">expand_more</button>
+                        <button class="material-icons svg-arrow" id="d2-down"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></button>
                     </div>
                     <div class="digitbox">
-                        <button class="material-icons svg-arrow" id="d3-up">expand_less</button>
+                        <button class="material-icons svg-arrow" id="d3-up"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="m296-345-56-56 240-240 240 240-56 56-184-184-184 184Z"/></svg></button>
                         <div class="digit" id="d3">0</div>
-                        <button class="material-icons svg-arrow" id="d3-down">expand_more</button>
+                        <button class="material-icons svg-arrow" id="d3-down"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></button>
                     </div>
                     <div class="unit-text" id="pace-units">/mi</div>
                 </div>
                 <div class="clock hidden" id="speed-dials">
                     <div class="digitbox">
-                        <button class="material-icons svg-arrow" id="s1-up">expand_less</button>
+                        <button class="material-icons svg-arrow" id="s1-up"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="m296-345-56-56 240-240 240 240-56 56-184-184-184 184Z"/></svg></button>
                         <div class="digit" id="s1">6</div>
-                        <button class="material-icons svg-arrow" id="s1-down">expand_more</button>
+                        <button class="material-icons svg-arrow" id="s1-down"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></button>
                     </div>
                     <div class="digitbox colon">
                         <span class="digit">.</span>
                     </div>
                     <div class="digitbox">
-                        <button class="material-icons svg-arrow" id="s2-up">expand_less</button>
+                        <button class="material-icons svg-arrow" id="s2-up"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="m296-345-56-56 240-240 240 240-56 56-184-184-184 184Z"/></svg></button>
                         <div class="digit" id="s2">0</div>
-                        <button class="material-icons svg-arrow" id="s2-down">expand_more</button>
+                        <button class="material-icons svg-arrow" id="s2-down"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></button>
                     </div>
                     <div class="unit-text" id="speed-units">mph</div>
                 </div>
@@ -109,8 +108,8 @@
             </div>
             <div class="arrow-container" id="wind-input">
                 <div class="arrow-box">
-                    <button class="material-icons pct-button" id="wind-m5" title="-5">keyboard_double_arrow_left</button>
-                    <button class="material-icons pct-button" id="wind-m1" title="-1">keyboard_arrow_left</button>
+                    <button class="material-icons pct-button" id="wind-m5" title="-5"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-240 200-480l240-240 56 56-183 184 183 184-56 56Zm264 0L464-480l240-240 56 56-183 184 183 184-56 56Z"/></svg></button>
+                    <button class="material-icons pct-button" id="wind-m1" title="-1"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/></svg></button>
                 </div>
                 <div class="wind-text">
                     <span class="wind-digits" id="wind-digit">5</span>
@@ -121,8 +120,8 @@
                     
                 </div>
                 <div class="arrow-box">
-                    <button class="material-icons pct-button" id="wind-p1" title="+1">keyboard_arrow_right</button>
-                    <button class="material-icons pct-button" id="wind-p5" title="+5">keyboard_double_arrow_right</button>
+                    <button class="material-icons pct-button" id="wind-p1" title="+1"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg></button>
+                    <button class="material-icons pct-button" id="wind-p5" title="+5"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M383-480 200-664l56-56 240 240-240 240-56-56 183-184Zm264 0L464-664l56-56 240 240-240 240-56-56 183-184Z"/></svg></button>
                 </div>
             </div>
             <div class="unit-stack-horiz wind-unit-select">
@@ -139,42 +138,28 @@
                             <div class="wind-profile-header">Wind profile</div>
                             <button class="unit-toggle profile-toggle" id="profile-city">
                                 <div class="profile-inner">
-                                    <span class="material-symbols-outlined">
-                                        location_city
-                                    </span>
-                                    <span class="material-symbols-outlined">
-                                        forest
-                                    </span>
+                                    <span class="material-symbols-outlined"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M120-120v-560h240v-80l120-120 120 120v240h240v400H120Zm80-80h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm240 320h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm240 480h80v-80h-80v80Zm0-160h80v-80h-80v80Z"/></svg></span>
+                                    <span class="material-symbols-outlined"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M280-80v-160H0l154-240H80l280-400 120 172 120-172 280 400h-74l154 240H680v160H520v-160h-80v160H280Zm389-240h145L659-560h67L600-740l-71 101 111 159h-74l103 160Zm-523 0h428L419-560h67L360-740 234-560h67L146-320Zm0 0h155-67 252-67 155-428Zm523 0H566h74-111 197-67 155-145Zm-149 80h160-160Zm201 0Z"/></svg></span>
                                 </div>
                                 <span>City/Forest</span>
                             </button>
                             <button class="unit-toggle profile-toggle active" id="profile-suburbs">
                                 <div class="profile-inner">
-                                    <span class="material-symbols-outlined">
-                                        home_work
-                                    </span>
-                                    <span class="material-symbols-outlined">
-                                        nature
-                                    </span>
+                                    <span class="material-symbols-outlined"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M680-600h80v-80h-80v80Zm0 160h80v-80h-80v80Zm0 160h80v-80h-80v80Zm0 160v-80h160v-560H480v56l-80-58v-78h520v720H680Zm-640 0v-400l280-200 280 200v400H360v-200h-80v200H40Zm80-80h80v-200h240v200h80v-280L320-622 120-480v280Zm560-360ZM440-200v-200H200v200-200h240v200Z"/></svg></span>
+                                    <span class="material-symbols-outlined"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M200-80v-80h240v-160h-80q-83 0-141.5-58.5T160-520q0-60 33-110.5t89-73.5q9-75 65.5-125.5T480-880q76 0 132.5 50.5T678-704q56 23 89 73.5T800-520q0 83-58.5 141.5T600-320h-80v160h240v80H200Zm160-320h240q50 0 85-35t35-85q0-36-20.5-66T646-630l-42-18-6-46q-6-45-39.5-75.5T480-800q-45 0-78.5 30.5T362-694l-6 46-42 18q-33 14-53.5 44T240-520q0 50 35 85t85 35Zm120-200Z"/></svg></span>
                                 </div>
                                 <span>Suburbs</span>
                             </button>
                             <button class="unit-toggle profile-toggle" id="profile-rural">
                                 <div class="profile-inner">
-                                    <span class="material-symbols-outlined">
-                                        agriculture
-                                    </span>
-                                    <span class="material-symbols-outlined">
-                                        psychiatry
-                                    </span>
+                                    <span class="material-symbols-outlined"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680h120q33 0 56.5 23.5T360-600H160Zm80 360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm540 0q25 0 42.5-17.5T840-300q0-25-17.5-42.5T780-360q-25 0-42.5 17.5T720-300q0 25 17.5 42.5T780-240Zm-540-60q-25 0-42.5-17.5T180-360q0-25 17.5-42.5T240-420q25 0 42.5 17.5T300-360q0 25-17.5 42.5T240-300Zm560-139q26 5 43 13.5t37 27.5v-242q0-33-23.5-56.5T800-720H548l-42-44 56-56-28-28-142 142 30 28 56-56 42 42v92q0 33-23.5 56.5T440-520h-81q23 17 37 35t28 45h16q66 0 113-47t47-113v-40h200v201ZM641-320q6-27 14.5-43.5T682-400H436q4 23 4 40t-4 40h205Zm139 160q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Zm-540 0q-83 0-141.5-58.5T40-360q0-83 58.5-141.5T240-560q83 0 141.5 58.5T440-360q0 83-58.5 141.5T240-160Zm393-360Z"/></svg></span>
+                                    <span class="material-symbols-outlined"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-120v-319q-64 0-123-24.5T213-533q-45-45-69-104t-24-123v-80h80q63 0 122 24.5T426-746q31 31 51.5 68t31.5 79q5-7 11-13.5t13-13.5q45-45 104-69.5T760-720h80v80q0 64-24.5 123T746-413q-45 45-103.5 69T520-320v200h-80Zm0-400q0-48-18.5-91.5T369-689q-34-34-77.5-52.5T200-760q0 48 18 92t52 78q34 34 78 52t92 18Zm80 120q48 0 91.5-18t77.5-52q34-34 52.5-78t18.5-92q-48 0-92 18.5T590-569q-34 34-52 77.5T520-400Zm0 0Zm-80-120Z"/></svg></span>
                                 </div>
                                 <span>Rural/Park</span>
                             </button>
                             <button class="unit-toggle profile-toggle" id="profile-none">
                                 <div class="profile-inner">    
-                                    <span class="material-symbols-outlined">
-                                        wind_power
-                                    </span>
+                                    <span class="material-symbols-outlined"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M400-40q0-33 23.5-56.5T480-120v-208q-12-5-22.5-11.5T438-354l-88 56q-14 8-30.5 10.5T286-290l-180-51q-29-8-47.5-32.5T40-429q0-38 26.5-64.5T131-520h301q10-11 22-19t26-13v-137q0-17 6.5-32t18.5-26l137-128q23-22 53.5-25t56.5 13q32 20 41.5 56.5T783-762L624-499q7 12 10.5 26t4.5 29l108 26q16 4 29 14t21 24l91 164q15 27 11 57t-26 52q-27 27-64.5 27T744-107L560-291v171q33 0 56.5 23.5T640-40H400ZM160-760v-80h240v80H160Zm400 71v137q1 0 1.5.5t1.5.5l152-253q2-4 1-8.5t-5-6.5q-3-2-7.5-1t-6.5 3L560-689ZM40-600v-80h200v80H40Zm480 200q17 0 28.5-11.5T560-440q0-17-11.5-28.5T520-480q-17 0-28.5 11.5T480-440q0 17 11.5 28.5T520-400Zm-211 34 93-56q-1-5-1-9v-9H131q-5 0-8 3t-3 8q0 4 2 7t6 4l181 52Zm419 25-114-26q-2 2-4 5t-4 5l195 194q3 3 8 3t8-3q3-3 3.5-6.5T819-177l-91-164ZM120-120v-80h200v80H120Zm400-320Zm43-111ZM401-440Zm205 83Z"/></svg></span>
                                 </div>
                                 <span>None</span>
                             </button>
@@ -225,8 +210,8 @@
                         <span class="dummy-container"><a href="#height-weight-info" class="i-note">?</a><span id="dummy-spacer"></span></span>
                         <span class="advanced-title", id="typical-or-custom">For a typical runner</span>
                         <div class="advanced-settings-right">
-                            <button class="material-icons adv-arrow invis" id="advanced-reset">rotate_left</button>
-                            <button class="material-icons adv-arrow" id="advanced-expand">settings</button>
+                            <button class="material-icons adv-arrow invis" id="advanced-reset"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-80q-50-5-96-24.5T256-156l56-58q29 21 61.5 34t66.5 18v82Zm80 0v-82q104-15 172-93.5T760-438q0-117-81.5-198.5T480-718h-8l64 64-56 56-160-160 160-160 56 58-62 62h6q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-438q0 137-91 238.5T520-80ZM198-214q-32-42-51.5-88T122-398h82q5 34 18 66.5t34 61.5l-58 56Zm-76-264q6-51 25-98t51-86l58 56q-21 29-34 61.5T204-478h-82Z"/></svg></button>
+                            <button class="material-icons adv-arrow" id="advanced-expand"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg></button>
                         </div>
                     </div>
                     <div class="advanced-content" id="advanced-content">
@@ -259,7 +244,7 @@
                 </div>
             </div>
             <div class="reset-box">
-                <button class="material-icons flip-button" id="reset-button" title="Restore defaults">history</button>
+                <button class="material-icons flip-button" id="reset-button" title="Restore defaults"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"/></svg></button>
                 <span class="reset-text">Restore defaults</span>
                 <a href="#calculator-settings" class="i-note">?</a>
             </div>
@@ -273,7 +258,7 @@
         </div>
         <div class="rw-app-gallery" data-current="wind-calculator"></div>
         <div class="explainer-text">
-            <h2 id="how-to-use">How to use<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <h2 id="how-to-use">How to use<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h2>
             
             <p>This app calculates the effects of headwinds and tailwinds on your pacing when you run. It uses a combination of aerodynamics calculations and empirical data to calculate a <strong>“wind-adjusted pace”</strong> or effort level when running into or with a wind of a given strength.</p>
             <p>All you need to input is the pace (or effort level) you are running at, and the direction of the wind relative to the runner. <strong>You can click on the compass directions</strong> to “snap” the wind to a specific orientation, or click and drag the dial to get a feel for how crosswinds of varying degrees affect your pacing.</p>
@@ -282,7 +267,7 @@
             <p>In other words, this calculator already accounts for the fact that running at 10 mph into a 5 mph headwind creates an effective 15 mph airspeed—you do not (and should not) need to do this math yourself. Likewise, the calculator already accounts for the metabolic cost of overcoming air resistance on a calm day.</p>
             <p>Also note that the compass directions (N, NE, E, …) are<em> illustrative only</em>. Obviously, if you are running south into a wind <em>from </em>the south, you are encountering a direct headwind, and you would have the calculator pointed to “north”—hence the top-down view of the runner and the text annotation.</p>
             <p>For more advanced use-cases, you can customize the weight of the runner and the wind profile used to calculate the true chest-level wind that you experience in different settings. See below for details on those fronts.</p>
-            <h3>How the wind-adjusted pace calculations work<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <h3>How the wind-adjusted pace calculations work<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h3>
             <p>Conceptually, calculating the effects of headwinds and tailwinds on pacing is relatively simple. The calculator uses the following procedure:</p>
             <ol>
                 <li>
@@ -300,20 +285,20 @@
             </ol>
             <p>A similar process works for finding the equivalent effort for a given pace.</p>
             <p>In <em>practice</em>, the calculations get a bit tedious. I have a full write-up on <a href="https://runningwritings.com/2024/08/headwinds-and-tailwinds-in-running.html"><strong>the science of headwinds and tailwinds for runners</strong></a> on my main site, so check that out if you are interested in the specifics.</p>
-            <h3>Are these wind calculations accurate?<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <h3>Are these wind calculations accurate?<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h3>
             <p><strong>In a word, yes</strong>. The plots below show the predicted metabolic cost of running at various headwind speeds (solid line) compared against real wind-tunnel data from <a href="https://pubmed.ncbi.nlm.nih.gov/5574828/">Pugh 1971</a>. This calculator was not “tuned” to the runner's data at all, aside from customizing the height and weight (and using no wind profile adjustment, since the measured wind speed inside the wind tunnel is the true wind speed encountered by the runner).</p>
             <img src="https://runningwritings.com/wp-content/uploads/2024/08/05-Predicted-versus-actual-effect-of-headwinds-and-tailwinds-on-running-cost-1536x1536.png">
             <p>The predicted metabolic costs line up very well for headwinds as strong as 15 mph, and the error is not too bad even into a 20 mph headwind. The reason the calculator predicts too high of a metabolic cost in extreme headwinds is likely because runners “lean into” extreme headwinds to generate lift, which reduces the metabolic cost of running slightly.</p>
             <p>Do see the <a href="#limitations">limitations section</a> below for some caveats, though.</p>
-            <h3>Calculating the effects of crosswinds<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <h3>Calculating the effects of crosswinds<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h3>
             <p>This wind calculator uses principles of vector addition to deal with crosswinds: first, the relative velocity of the air is calculated, then used to calculate the total drag force. Then, the forward component of the drag force vector is used to calculate the effective opposing (or assisting) force experienced by the runner.</p>
             <p>For now, the lateral component of drag forces from crosswinds is ignored. The potential effects of ignoring lateral effects are discussed in the limitations section. The main reason they are ignored is that there is no research on the metabolic cost of resisting a lateral force during running. I suspect these costs are not very big, though, since runners deal with lateral forces just fine when running on a track without any major effects on their pacing.</p>
             <p>Do note that, because of how the drag equation works, a pure lateral crosswind <em>does</em> still slow you down!</p>
-            <h2 id="height-weight-info">Do height and weight affect pacing in the wind?<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <h2 id="height-weight-info">Do height and weight affect pacing in the wind?<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h2>
             <p><strong>No, not really</strong>. Height and weight have countervailing effects at different points in the calculation process. On one hand, taller and heavier runners have more forward-facing surface area, and thus experience a greater absolute drag force.</p>
             <p>However, since the metabolic cost of overcoming horizontal forces is a function of the magnitude of the force <em>relative to body mass</em>, greater drag forces are less metabolically costly for a heavier runner. Height and weight effects <em>mostly </em>cancel out, but for precise calculations—or for comparisons with experimental data—you can adjust your body weight using the dropdown. You'll notice that smaller runners are slightly more affected by strong headwinds, but you need to use enormous differences (e.g. 200 lbs vs 100 lbs) to see an effect.</p>
             <p>The reason you only need to input weight and not height is because the equation the app uses to calculate body surface area (from <a href="https://pubmed.ncbi.nlm.nih.gov/11500314/">Livingston and Lee 2001</a>) requires only weight, and actually outperforms older equations that used both height and weight.</p>
-            <h2 id="wind-profile-mode">Wind profile: nominal versus actual wind speeds<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <h2 id="wind-profile-mode">Wind profile: nominal versus actual wind speeds<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h2>
             <p>Wind measurements are made at weather stations positioned 33 feet (10 meters) off the ground, typically away from major obstacles like buildings and trees. For a runner at ground level, the actual wind speed you encounter is affected by the terrain and obstacles around you: even for the same nominal wind speed, you will encounter less wind in a busy suburban area than on a lonely country road.</p>
             <p>These ground level effects can be significant: in a city or a dense forest, the true wind speed at chest height (~1.5 meters off the ground) can be less than half the wind speed up at 10 meters off the ground where the wind speed is typically measured and forecast.</p>
             <p>The wind profile settings allow you to use an empirical model in meteorology called the <a href="https://en.wikipedia.org/wiki/Wind_profile_power_law">wind profile power law</a> to attempt to adjust for the effects of shelter and terrain on the true wind speed you encounter.</p>
@@ -352,13 +337,13 @@
             <p>The default is “Suburbs” simply because that's the most common training location for the runners that I coach.</p>
             <p>Notably, if you have a true ground-level wind speed—for example, from an anemometer or a wind gauge kit used to measure wind speeds in sprint events—you should set the wind profile to “None.” Setting the wind profile to None applies <em>no </em>correction, i.e. it assumes that your input wind speed is exactly the air speed that the runner encounters.</p>
             <p>Because “tube-style” wind gauges measure only the head-on component of wind (in the direction they are pointing), you should also set the wind direction in this app to be a direct headwind, i.e. “N” on the compass rose, if you are using a track and field wind gauge as your source of wind speed. The same is not true for normal anemometers used for weather measurements.</p>
-            <h2 id="effort-vs-pace">Effort versus pace when running in the wind<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <h2 id="effort-vs-pace">Effort versus pace when running in the wind<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h2>
             <p>This calculator has two modes: effort mode and pace mode.</p>
             <p>In effort mode, the calculator answers this question: “If I run at the effort level that <em>would </em>produce 7:00/mi in calm conditions, what would the actual pace be given the current wind conditions?”</p>
             <p>Effort mode is what I use when I'm adjusting workout paces for windy days. I know the athlete's target pace in calm conditions, and I want to know what they should aim for when running into (or with) the wind.</p>
             <p>In pace mode, the calculator answers this question: “If I <em>actually ran </em>7:00/mi in the current wind conditions, how fast would I have gone in calm conditions?”</p>
             <p>Pace mode is useful if you've already done your run (or race) and want to back-calculate your effective effort, given the splits you actually ran during the segments into, or with, the wind.</p>
-            <h2 id="limitations">Limitations<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <h2 id="limitations">Limitations<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h2>
             <p>There are three main sources of uncertainty that put some limits on the accuracy of these headwind and tailwind calculations.</p>
             <p>The first is the uncertainty in the wind profile. The wind profile power law is only an approximation, and hyper-local terrain can significantly affect the true wind speed you encounter. If you have extensive knowledge of meteorology or civil engineering and have ideas for improvements on this front, <a href="mailto:john@runningwritings.com">send me an email.</a></p>
             <p>Otherwise, if you have actual ground-level wind speed, you can just set the wind profile to None and use your true wind speed. I have vague hopes of running watches eventually incorporating a wind sensor, which would negate this limitation completely.</p>
@@ -366,18 +351,18 @@
             <p>This is probably an unrealistic assumption, but there is no research yet on the metabolic cost of overcoming lateral forces. I am emailing a few researchers for their thoughts and I'll update the calculator if anyone has any clever ideas.</p>
             <p>The third is the individual variation in the metabolic cost of running, and in the metabolic cost of overcoming opposing horizontal forces. I am currently working on getting access to the individual-level data I'd need to construct uncertainty intervals around the “point estimate” given by the wind calculator.</p>
             <p>There are a few other minor limitations, like the fact that this calculator assumes you are near sea level (for air density effects) but those are only relevant at very high altitudes and fairly fast speeds.</p>
-            <h3>What about running on a track?<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <h3>What about running on a track?<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h3>
             <p>Running on a track is tricky because you get exposed to all 360 degrees of the wind each lap. Calculating the net metabolic effect would require a line integral through a vector field. Not too complicated to numerically approximate, and the calculator already has the basic equations to do it, but it's probably something I'll split off into a more specialized calculator—<a href="https://runningwritings.eo.page/news-and-notes-signup"><strong>join my email newsletter</strong></a> if you want to find out when I release that app.</p>
             <p>The same line integral trick should work for calculating a “net wind effect” across an entire running route, but that would require uploading a .gpx file. That's a heavier lift, so don't get your hopes up.</p>
-            <h3>What about drafting?<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <h3>What about drafting?<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h3>
             <p>I'm working on it. Once the drag equation and metabolic cost calculations are complete, it's not that much extra trouble to calculate the additional effects from drafting behind another runner, thanks to the raft of excellent experimental and computational research on drafting in running that's come out in the wake of the Nike Breaking2 Project and the Ineos 1:59 Challenge.</p>
             <p>However, because drafting is most common on the track, I probably will not implement drafting calculations until I have a track-lap wind effect calculator as well. Again, <a href="https://runningwritings.eo.page/news-and-notes-signup"><strong>join my email newsletter</strong></a> if you want to know when that comes out! I will also write up an accompanying article on the science of drafting.</p>
-            <h3>Will this calculator work for cycling?<a class="material-icons up" href="#top">arrow_upward</a></h3>
+            <h3>Will this calculator work for cycling?<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h3>
             <p><strong>No</strong>, for two reasons. First, the drag coefficient and frontal area are different in running versus cycling. Second, and more importantly, the calculations under the hood use two empirical datasets for metabolic cost: <a href="https://pubmed.ncbi.nlm.nih.gov/28459289/">Black et al. 2018</a>, to calculate the metabolic cost of running at a given speed without air resistance, and <a href="https://pubmed.ncbi.nlm.nih.gov/35834628/">Da Silva et al. 2022</a>, to calculate the metabolic cost of overcoming a given horizontal opposing force.</p>
             <p>Cycling and running do not have the same speed-metabolic cost relationship, so if you punch in cycling data, you'll probably get nonsense. However, if you have the appropriate metabolic cost data, it would be relatively easy to swap out these calculations and change the drag coefficient and frontal area. The <a href="https://github.com/johnjdavisiv/wind-calculator" target="_blank">source code</a> is MIT license, so have at it!</p>
-            <h2 id="calculator-settings">Calculator settings<a class="material-icons up" href="#top">arrow_upward</a></h2>
-            <p>This calculator will remember your settings&mdash;your pace or speed, input and wind units, wind speed and direction, wind profile, and runner weight&mdash;in your browser's local storage. So, when you come back to the calculator later, you'll be able to pick up where you left off. If you'd rather it didn't, switch off the <strong>Remember settings</strong> toggle. You can reset all settings to their defaults using the <span class="material-icons inline-icon">history</span> button.</p>
-            <h2 id="get-updates">Support my work<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <h2 id="calculator-settings">Calculator settings<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h2>
+            <p>This calculator will remember your settings&mdash;your pace or speed, input and wind units, wind speed and direction, wind profile, and runner weight&mdash;in your browser's local storage. So, when you come back to the calculator later, you'll be able to pick up where you left off. If you'd rather it didn't, switch off the <strong>Remember settings</strong> toggle. You can reset all settings to their defaults using the <span class="material-icons inline-icon"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"/></svg></span> button.</p>
+            <h2 id="get-updates">Support my work<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h2>
             <p>If you want to find out when I have new apps and research coming out, sign up for my email list below! It's the best way to follow my work.</p>
             <p>If you're training for the marathon, be sure to check out my new book, <strong><a href="https://amzn.to/43mIH2B" class="plausible-event-name=Body+Book+Click">Marathon Excellence for Everyone</a></strong>. It covers the modern approach to marathon training, including training plans, racing strategies, and the latest science on training.</p>
             <p>If you live outside of the United States, there is also a <strong><a href="https://amzn.to/3LzimIB" class="plausible-event-name=Body+Book+Click">Metric Edition of Marathon Excellence</a></strong> available, with all workouts and paces in kilometers!</p>
@@ -392,14 +377,14 @@
             <div class="newsletter-block">
                 <script async src="https://eomail6.com/form/187bb3d4-92e9-11ed-8dcb-9536633250ee.js" data-form="187bb3d4-92e9-11ed-8dcb-9536633250ee"></script>
             </div>
-            <h2 id="contact">Contact<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <h2 id="contact">Contact<a class="material-icons up" href="#top"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg></a></h2>
             <p>If you've got feedback on this web app, or if you've found a bug, please reach out! You can reach me at <a href="mailto:john@runningwritings.com"><strong>john@runningwritings.com</strong></a>.</p>
             <p>I'm <a href="https://x.com/JDruns"><strong>also on X</strong></a>, but the best way to follow my work is my <a href="https://runningwritings.eo.page/news-and-notes-signup"><strong>email list</strong></a>!</p>
         </div>
     </main>
     <footer>
         Made by <a class="author-link" href="https://runningwritings.com">John Davis</a>
-        <a href="https://github.com/johnjdavisiv/wind-calculator" target="_blank"><i class="fa fa-github github-icon"></i></a>
+        <a href="https://github.com/johnjdavisiv/wind-calculator" target="_blank"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
     </footer>
     <script async src="https://eomail6.com/form/1c0d1c8c-8b6f-11f0-af9a-af63b4293a21.js" data-form="1c0d1c8c-8b6f-11f0-af9a-af63b4293a21"></script>
 </body>
