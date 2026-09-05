@@ -1119,7 +1119,31 @@ tr:hover {
     .advanced-content {
         font-size:1em;
     }
-    
+
+    /* 15px of side padding per cell costs 90px of table width on a phone, which is
+       enough to push the wind-profile table (and so the page) wider than the screen */
+    th, td {
+        padding: 10px 8px;
+    }
+
+}
+
+
+/* The compass row is the wind-profile column (~95px) plus the compass, side by side.
+   At the default 270px the compass needs ~365px of viewport, so it overflows a 360px
+   phone (and sits visibly off-centre on a 375px one). Below 380px, size the compass
+   from the viewport instead, keeping the dial and the buttons in proportion. */
+@media (max-width: 380px) {
+    :root {
+        --container-size: min(calc(300px * var(--scale-factor)), calc(100vw - 124px));
+        --dial-size: calc(var(--container-size) * 0.6667);
+        --button-size: calc(var(--container-size) * 0.14);
+    }
+
+    .dial-center {
+        width: calc(var(--container-size) * 0.3556);
+        height: calc(var(--container-size) * 0.3556);
+    }
 }
 
 

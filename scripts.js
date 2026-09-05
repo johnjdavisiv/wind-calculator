@@ -171,20 +171,33 @@ function getPointerAngle(clientX, clientY) {
   return Math.atan2(clientY - centerY, clientX - centerX) * 180 / Math.PI;
 }
 
+function getEventPoint(event) {
+  // Touch events carry no clientX of their own; mouse events carry no touch list.
+  // clientX is legitimately 0 at the very left edge of the viewport, so test for the
+  // touch list first and check the type of clientX - never its truthiness.
+  const touch = event.touches && event.touches[0];
+  if (touch) return { clientX: touch.clientX, clientY: touch.clientY };
+  if (typeof event.clientX === 'number') return { clientX: event.clientX, clientY: event.clientY };
+  return null;
+}
+
 function startDrag(event) {
+  const point = getEventPoint(event);
+  if (!point) return;  // No usable coordinates: don't start a drag we can't follow
   isDragging = true;
   startAngle = angle;
-  const clientX = event.clientX || event.touches[0].clientX;
-  const clientY = event.clientY || event.touches[0].clientY;
-  startPointerAngle = getPointerAngle(clientX, clientY);
+  startPointerAngle = getPointerAngle(point.clientX, point.clientY);
   event.preventDefault();  // Prevent accidental selection or dragging
 }
 
 function moveDrag(event) {
   if (isDragging) {
-    const clientX = event.clientX || event.touches[0].clientX;
-    const clientY = event.clientY || event.touches[0].clientY;
-    const currentPointerAngle = getPointerAngle(clientX, clientY);
+    const point = getEventPoint(event);
+    if (!point) {  // Lost the pointer mid-drag; stop rather than throw
+      endDrag();
+      return;
+    }
+    const currentPointerAngle = getPointerAngle(point.clientX, point.clientY);
     const angleDiff = currentPointerAngle - startPointerAngle;
     angle = (startAngle + angleDiff + 360) % 360;
     updateDial();
@@ -205,6 +218,12 @@ document.addEventListener('mouseup', endDrag);
 dialContainer.addEventListener('touchstart', startDrag);
 document.addEventListener('touchmove', moveDrag, { passive: false });  // Set passive to false to allow preventDefault
 document.addEventListener('touchend', endDrag);
+
+// An interrupted gesture (incoming call, edge swipe, the browser taking over the
+// gesture) fires cancel instead of end - without these the dial stays "stuck" to
+// the finger and follows the next unrelated touch.
+document.addEventListener('touchcancel', endDrag);
+document.addEventListener('pointercancel', endDrag);
 
 compassButtons.forEach((button, index) => {
   button.addEventListener('click', () => {
@@ -860,9 +879,6 @@ function calcAirPct(v_relative, relative_angle_deg) {
   // now get forward component of drag force
   const dragForceFwd = dragForceTotal*Math.sin(relative_angle_rad)
 
-  // console.log(`Drag force total: ${dragForceTotal.toFixed(1)}`)
-  // console.log(`Drag force fwd: ${dragForceFwd.toFixed(1)}`)
-  // console.log(`Input relative angle: ${relative_angle_deg.toFixed(1)}`)
 
 
   // need for BW norm
@@ -973,27 +989,19 @@ function doWindCalcs(){
 
 
     // Find metabolic cost of running (treadmill and also relative-wind cost) at true_wind_fwd_comp
-    // console.log(`True forward component of wind: ${true_wind_fwd_comp.toFixed(2)} m/s`)
-    // console.log(`True runner velocity: ${input_m_s.toFixed(2)} m/s`)
 
     // this part will not be same for effort mode
     const cost_actual_treadmill = calcTreadMetCost(input_m_s, IS_ELITE)
 
     // Correct! 
     const V_relative = getVectorMag(true_wind_lat_comp, true_wind_fwd_comp + input_m_s)
-    // console.log(`Correct V relative of airflow is ${V_relative.toFixed(2)}`)
-    // console.log(`Input wind speed is ${true_wind_ms.toFixed(2)}`)
 
     const relative_angle_deg = getRelativeWindAngle(true_wind_lat_comp, true_wind_fwd_comp + input_m_s)
-    // console.log(`Input wind angle is ${angle.toFixed(1)}`)
-    // console.log(`Relative V angle is ${relative_angle_deg.toFixed(1)}`)
 
     // Now... use Fd sin (relative_angle) to get Fd fwd comp
 
 
     //const V_relative = input_m_s + true_wind_fwd_comp // <-- NOT CORRECT
-    // console.log(`V_relative is: ${V_relative.toFixed(2)} m/s`)
-    // console.log(`Treadmill cost at ${input_m_s.toFixed(2)} m/s is ${cost_actual_treadmill.toFixed(2)} W/kg`)
 
     // ALSO PROBLEM - need to fix so we use correct v_relative
 
@@ -1001,11 +1009,9 @@ function doWindCalcs(){
 
 
     const total_cost_w_kg = cost_actual_treadmill*(1+air_pct_actual)
-    // console.log(`Total metabolic cost at ${input_m_s.toFixed(2)} m/s in ${true_wind_fwd_comp.toFixed(2)} m/s true fwd wind is ${total_cost_w_kg.toFixed(2)} W/kg`)
 
     // 3) Look up closest metabolic cost in calm air grid for total_cost_w_kg
     const calm_air_equiv_speed = lookupSpeedFromCost(total_cost_w_kg, v_grid, C_calm_grid)
-    // console.log(`Calm air equivalent of ${input_m_s.toFixed(2)} m/s in ${true_wind_fwd_comp.toFixed(2)} m/s true fwd is ${calm_air_equiv_speed.toFixed(2)} m/s`)
     output_speed_ms = calm_air_equiv_speed
   }
 }
@@ -1013,7 +1019,6 @@ function doWindCalcs(){
 
 function getVectorMag(x_comp, y_comp){
   const v_mag = Math.sqrt(x_comp**2 + y_comp**2)
-  // console.log(v_mag.toFixed(2))
   return v_mag
 }
 
@@ -1040,7 +1045,7 @@ function lookupSpeedFromCost(cost_query, speed_grid, cost_grid) {
   // Check if x is outside the range of speed_m_s
   if (cost_query < cost_grid[0] || cost_query > cost_grid[cost_grid.length - 1]) {
       //throw new Error('x is outside of the range of the speed_m_s column');
-      console.log('Cost query is outside range of the grid!')
+      // Off the grid: NaN is the sentinel that makes updateOutput() show the 🤔 glyph
       f_x = NaN;
   } else {
       // Find the indices that x falls between
