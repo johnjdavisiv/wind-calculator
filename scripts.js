@@ -528,9 +528,18 @@ function setWindUnits(button){
     wind_val = Math.round(wind_val)
     wind_text.textContent = wind_val.toFixed(0)
   }
-  
-  //Do I need to od anthign else? 
+  updateWindStepTitles();
+}
 
+// Tooltips have to track the unit: m/s steps by 1.0 / 0.1, everything else by 5 / 1
+function updateWindStepTitles() {
+    const is_ms = wind_units.textContent === 'm/s';
+    const big_step = is_ms ? '1.0' : '5';
+    const small_step = is_ms ? '0.1' : '1';
+    document.querySelector('#wind-m5').title = `-${big_step}`;
+    document.querySelector('#wind-m1').title = `-${small_step}`;
+    document.querySelector('#wind-p1').title = `+${small_step}`;
+    document.querySelector('#wind-p5').title = `+${big_step}`;
 }
 
 
@@ -823,6 +832,8 @@ function calcAirPct(v_relative, relative_angle_deg) {
   // inc ase of calm air, v_relative is just input_m_s
   const relative_angle_rad = relative_angle_deg * (Math.PI / 180);
 
+  // Avoids a divide-by-zero / NaN path when there is no relative airflow
+  if (!(v_relative > 1e-9)) return 0;
 
   // get drag force for TOTAL airflow
   const dragForceTotal = calcDragForce(v_relative)
@@ -987,6 +998,10 @@ function getVectorMag(x_comp, y_comp){
 }
 
 function getRelativeWindAngle(x_comp, y_comp){
+  // No airflow at all (calm air, v = 0 on the grid): the angle is undefined and
+  // atan(0/0) would poison the whole cost grid with NaN. Any angle works since
+  // the drag force is zero, so return 0.
+  if (Math.abs(x_comp) < 1e-9 && Math.abs(y_comp) < 1e-9) return 0
   const rel_angle_rad = Math.atan(y_comp / Math.abs(x_comp))
   // Note the absolute value here, VERY important to preserve sign of y comp only
 
@@ -1092,3 +1107,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 updateDial();
 updateResult();
+updateWindStepTitles(); // keep the tooltips in step with the unit even on a fresh load
