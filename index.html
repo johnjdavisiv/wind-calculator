@@ -21,6 +21,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="styles.css?v=1.1.0">
     <link rel="stylesheet" href="app-gallery.css?v=22e5443b">
+    <script src="rw-storage.js?v=1.0.0" defer></script>
     <script src="scripts.js?v=1.1.0" defer></script>
     <script src="apps.js?v=22e5443b" defer></script>
     <script src="app-gallery.js?v=22e5443b" defer></script>
@@ -257,6 +258,18 @@
                     </div>
                 </div>
             </div>
+            <div class="reset-box">
+                <button class="material-icons flip-button" id="reset-button" title="Restore defaults">history</button>
+                <span class="reset-text">Restore defaults</span>
+                <a href="#calculator-settings" class="i-note">?</a>
+            </div>
+            <div class="remember-box">
+                <span class="remember-text">Remember settings</span>
+                <label class="switch">
+                    <input type="checkbox" id="remember-toggle" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
         </div>
         <div class="rw-app-gallery" data-current="wind-calculator"></div>
         <div class="explainer-text">
@@ -362,6 +375,8 @@
             <h3>Will this calculator work for cycling?<a class="material-icons up" href="#top">arrow_upward</a></h3>
             <p><strong>No</strong>, for two reasons. First, the drag coefficient and frontal area are different in running versus cycling. Second, and more importantly, the calculations under the hood use two empirical datasets for metabolic cost: <a href="https://pubmed.ncbi.nlm.nih.gov/28459289/">Black et al. 2018</a>, to calculate the metabolic cost of running at a given speed without air resistance, and <a href="https://pubmed.ncbi.nlm.nih.gov/35834628/">Da Silva et al. 2022</a>, to calculate the metabolic cost of overcoming a given horizontal opposing force.</p>
             <p>Cycling and running do not have the same speed-metabolic cost relationship, so if you punch in cycling data, you'll probably get nonsense. However, if you have the appropriate metabolic cost data, it would be relatively easy to swap out these calculations and change the drag coefficient and frontal area. The <a href="https://github.com/johnjdavisiv/wind-calculator" target="_blank">source code</a> is MIT license, so have at it!</p>
+            <h2 id="calculator-settings">Calculator settings<a class="material-icons up" href="#top">arrow_upward</a></h2>
+            <p>This calculator will remember your settings&mdash;your pace or speed, input and wind units, wind speed and direction, wind profile, and runner weight&mdash;in your browser's local storage. So, when you come back to the calculator later, you'll be able to pick up where you left off. If you'd rather it didn't, switch off the <strong>Remember settings</strong> toggle. You can reset all settings to their defaults using the <span class="material-icons inline-icon">history</span> button.</p>
             <h2 id="get-updates">Support my work<a class="material-icons up" href="#top">arrow_upward</a></h2>
             <p>If you want to find out when I have new apps and research coming out, sign up for my email list below! It's the best way to follow my work.</p>
             <p>If you're training for the marathon, be sure to check out my new book, <strong><a href="https://amzn.to/43mIH2B" class="plausible-event-name=Body+Book+Click">Marathon Excellence for Everyone</a></strong>. It covers the modern approach to marathon training, including training plans, racing strategies, and the latest science on training.</p>

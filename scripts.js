@@ -83,6 +83,7 @@ function updateResult(){
   readCurrentWind()
   doWindCalcs()
   updateOutput()
+  saveState()   // every input change funnels through here, so this is the save point
 
   // ok bc of scope and such we need to read the values at all times! 
 }
@@ -105,7 +106,10 @@ weightStLbInput.addEventListener('input', updateResult);
 // Effort vs pace toggle switch
 // Attach the event listener to the checkbox input
 let effortToggle = document.querySelector('#pace-post .switch input[type="checkbox"]');
-effortToggle.addEventListener('change', function() {
+
+// Sync effort_mode + the surrounding labels to the switch. Split out from the
+// change handler so applyState() can replay a saved switch position.
+function setEffortFromToggle() {
   let effortText = document.getElementById("pace-or-effort")
   let resultPreText = document.getElementById('result-pre')
 
@@ -119,6 +123,10 @@ effortToggle.addEventListener('change', function() {
     effortText.innerHTML = "calm-day effort"
     resultPreText.innerText = "will result in"
   }
+}
+
+effortToggle.addEventListener('change', function() {
+  setEffortFromToggle()
   updateResult()
 })
 
@@ -263,26 +271,32 @@ function updateRunnerLabel(){
 const imp_metric_buttons = document.querySelectorAll('.metric-toggle');
 const imp_metric_divs = document.querySelectorAll('.ht-wt-div')
 
+// Reveal the matching weight box and set units_mode. Split out from the click
+// handler so applyState() can replay a saved unit choice.
+function setWeightUnits(button){
+    imp_metric_divs.forEach(btn => btn.classList.add('hidden'));
+
+    //messy ifelse for hiding
+    if (button.textContent == "usa") {
+      document.getElementById('imperial-input').classList.remove('hidden')
+    } else if (button.textContent == "uk") {
+      document.getElementById('uk-input').classList.remove('hidden')
+    } else {
+      document.getElementById('metric-input').classList.remove('hidden')
+    }
+
+    units_mode = button.textContent;
+}
+
 imp_metric_buttons.forEach(button => {
     button.addEventListener('click', (e) => {
         // Remove active class from all buttons
         imp_metric_buttons.forEach(btn => btn.classList.remove('active'));
-        imp_metric_divs.forEach(btn => btn.classList.add('hidden'));
-        
+
         // Toggle the active state of the clicked button
         e.target.classList.toggle('active');
 
-
-        //messy ifelse for hiding
-        if (button.innerText == "usa") {
-          document.getElementById('imperial-input').classList.remove('hidden')
-        } else if (button.innerText == "uk") {
-          document.getElementById('uk-input').classList.remove('hidden')
-        } else {
-          document.getElementById('metric-input').classList.remove('hidden')
-        }
-
-        units_mode = button.textContent;
+        setWeightUnits(button);
         //setOutputText(button);
         updateResult();
     });
@@ -1105,6 +1119,206 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-updateDial();
-updateResult();
+// --- State persistence (shared localStorage layer, rw-storage.js) ---
+// Every recompute writes the current inputs to localStorage under
+// rw.wind-calculator.v1; on load the record is validated and replayed through
+// the normal setter functions, so the DOM and the globals stay in sync.
+// Restore defaults drops the record and replays DEFAULT_STATE.
+
+const APP_ID = 'wind-calculator';   // localStorage key rw.wind-calculator.v1
+let remember_settings = true;
+
+const DEFAULT_STATE = {
+    version: 1,
+    pace_input: { min: 7, sec_2: 0, sec_1: 0 },
+    speed_input: { whole: 6, decimal: 0 },
+    pace_button: '/mi',
+    effort_mode: false,
+    wind_val: 5,
+    wind_units: 'mph',
+    wind_angle: 0,
+    alpha_profile: 'profile-suburbs',
+    weight: { lbs: 150, kg: 68, st: 10, st_lb: 10 },
+    weight_units: 'usa'
+};
+
+function getStateObject() {
+    const active_pace = document.querySelector('.pace-toggle.active');
+    const active_wind = document.querySelector('.wind-toggle.active');
+    const active_profile = document.querySelector('.profile-toggle.active');
+    const active_weight_units = document.querySelector('.metric-toggle.active');
+    return {
+        version: 1,
+        pace_input: {
+            min: parseInt(d1.textContent),
+            sec_2: parseInt(d2.textContent),
+            sec_1: parseInt(d3.textContent)
+        },
+        speed_input: {
+            whole: parseInt(s1.textContent),
+            decimal: parseInt(s2.textContent)
+        },
+        pace_button: active_pace ? active_pace.textContent.trim() : DEFAULT_STATE.pace_button,
+        effort_mode: effort_mode,
+        wind_val: wind_val,
+        wind_units: active_wind ? active_wind.textContent.trim() : wind_units.textContent,
+        wind_angle: angle,
+        alpha_profile: active_profile ? active_profile.id : DEFAULT_STATE.alpha_profile,
+        weight: {
+            lbs: clampNum(weightLbsInput.value, 30, 999, DEFAULT_STATE.weight.lbs),
+            kg: clampNum(weightKgInput.value, 15, 500, DEFAULT_STATE.weight.kg),
+            st: clampNum(weightStInput.value, 3, 80, DEFAULT_STATE.weight.st),
+            st_lb: clampNum(weightStLbInput.value, 0, 13, DEFAULT_STATE.weight.st_lb)
+        },
+        weight_units: active_weight_units ? active_weight_units.textContent.trim() : DEFAULT_STATE.weight_units
+    };
+}
+
+function saveState() {
+    try {
+        RWStorage.save(APP_ID, getStateObject(), remember_settings);
+    } catch (e) {
+        // silently fail
+    }
+}
+
+function loadSavedState() {
+    // Shared localStorage layer (rw-storage.js). This app never used a cookie
+    // for its inputs, so there is nothing to migrate.
+    const saved = RWStorage.load(APP_ID);
+    remember_settings = saved.remember;
+    const remember_toggle_el = document.getElementById('remember-toggle');
+    if (remember_toggle_el) remember_toggle_el.checked = remember_settings;
+    if (!saved.state) return null;
+    try {
+        const state = saved.state;
+        // Version check for future migrations
+        if (!state || state.version !== 1) return null;
+        // localStorage is user-editable, so check the shape before applyState() trusts it
+        if (!state.pace_input || typeof state.pace_input !== 'object') return null;
+        if (!state.speed_input || typeof state.speed_input !== 'object') return null;
+        if (!state.weight || typeof state.weight !== 'object') return null;
+        return state;
+    } catch (e) {
+        return null;
+    }
+}
+
+const clampInt = (x, lo, hi, fallback) => {
+    const v = parseInt(x);
+    return Number.isFinite(v) ? Math.min(Math.max(v, lo), hi) : fallback;
+}
+
+const clampNum = (x, lo, hi, fallback) => {
+    const v = parseFloat(x);
+    return Number.isFinite(v) ? Math.min(Math.max(v, lo), hi) : fallback;
+}
+
+// Activate the button in a group whose label matches `text`, routing through the
+// group's setter so dependent labels stay in sync. Returns false if no match.
+function activateButtonByText(buttons, text, setter) {
+    let matched = null;
+    buttons.forEach(btn => { if (btn.textContent.trim() === text) matched = btn; });
+    if (!matched) return false;
+    buttons.forEach(btn => btn.classList.remove('active'));
+    matched.classList.add('active');
+    if (setter) setter(matched);
+    return true;
+}
+
+// Same, but matched on the button id (the wind-profile buttons have icon markup
+// inside them, so their text is not a stable key).
+function activateButtonById(buttons, id, setter) {
+    let matched = null;
+    buttons.forEach(btn => { if (btn.id === id) matched = btn; });
+    if (!matched) return false;
+    buttons.forEach(btn => btn.classList.remove('active'));
+    matched.classList.add('active');
+    if (setter) setter(matched);
+    return true;
+}
+
+function applyState(state) {
+    const d = DEFAULT_STATE;
+    const pace_in = (state && state.pace_input) || d.pace_input;
+    const speed_in = (state && state.speed_input) || d.speed_input;
+    const weight_in = (state && state.weight) || d.weight;
+
+    // 1. Pace and speed dials, clamped in case of a stale or hand-edited record
+    d1.textContent = clampInt(pace_in.min, 0, 60, d.pace_input.min);
+    d2.textContent = clampInt(pace_in.sec_2, 0, 5, d.pace_input.sec_2);
+    d3.textContent = clampInt(pace_in.sec_1, 0, 9, d.pace_input.sec_1);
+    s1.textContent = clampInt(speed_in.whole, 0, 60, d.speed_input.whole);
+    s2.textContent = clampInt(speed_in.decimal, 0, 9, d.speed_input.decimal);
+
+    // 2. Runner weight (advanced panel), then the weight units, which reveals
+    //    the matching box and sets units_mode
+    weightLbsInput.value = clampNum(weight_in.lbs, 30, 999, d.weight.lbs);
+    weightKgInput.value = clampNum(weight_in.kg, 15, 500, d.weight.kg);
+    weightStInput.value = clampNum(weight_in.st, 3, 80, d.weight.st);
+    weightStLbInput.value = clampNum(weight_in.st_lb, 0, 13, d.weight.st_lb);
+    if (!activateButtonByText(imp_metric_buttons, state && state.weight_units, setWeightUnits)) {
+        activateButtonByText(imp_metric_buttons, d.weight_units, setWeightUnits);
+    }
+    // "For a typical runner" vs "Custom runner" caption (reads units_mode + weight)
+    updateRunnerLabel();
+
+    // 3. Input units: picks pace-vs-speed dials, the unit labels, and the output units
+    if (!activateButtonByText(pace_buttons, state && state.pace_button, setPaceText)) {
+        activateButtonByText(pace_buttons, d.pace_button, setPaceText);
+    }
+
+    // 4. Pace-vs-effort switch
+    effortToggle.checked = !(state && state.effort_mode === true);
+    setEffortFromToggle();
+
+    // 5. Wind speed and units. Set directly rather than through setWindUnits(),
+    //    which rounds the value as a side effect of switching units.
+    if (!activateButtonByText(output_buttons, state && state.wind_units, null)) {
+        activateButtonByText(output_buttons, d.wind_units, null);
+    }
+    wind_units.textContent = document.querySelector('.wind-toggle.active').textContent.trim();
+    wind_val = clampNum(state && state.wind_val, 0, 50, d.wind_val);
+    if (wind_units.textContent == "m/s") {
+        wind_text.textContent = wind_val.toFixed(1);
+    } else {
+        wind_val = Math.round(wind_val);
+        wind_text.textContent = wind_val.toFixed(0);
+    }
+    updateWindStepTitles();
+
+    // 6. Wind profile (sets alpha_exp)
+    if (!activateButtonById(profile_buttons, state && state.alpha_profile, setWindProfile)) {
+        activateButtonById(profile_buttons, d.alpha_profile, setWindProfile);
+    }
+
+    // 7. Compass angle last: updateDial() redraws the arrow, refreshes the
+    //    headwind/tailwind label, and recomputes (which re-saves)
+    const saved_angle = parseFloat(state && state.wind_angle);
+    angle = Number.isFinite(saved_angle) ? ((saved_angle % 360) + 360) % 360 : d.wind_angle;
+    updateDial();
+}
+
+// --- Reset button ---
+document.getElementById('reset-button').addEventListener('click', () => {
+    RWStorage.clear(APP_ID);
+    applyState(DEFAULT_STATE);
+});
+
+// --- Remember-settings toggle ---
+const remember_toggle = document.getElementById('remember-toggle');
+remember_toggle.addEventListener('change', () => {
+    remember_settings = remember_toggle.checked;
+    saveState();  // with the flag off this drops the stored state and keeps only the preference
+});
+
+// --- Initialize (must be after all declarations) ---
+const savedState = loadSavedState();
+try {
+    applyState(savedState || DEFAULT_STATE);
+} catch (e) {
+    // A malformed saved state must not break the page; fall back to the defaults
+    RWStorage.clear(APP_ID);
+    applyState(DEFAULT_STATE);
+}
 updateWindStepTitles(); // keep the tooltips in step with the unit even on a fresh load
